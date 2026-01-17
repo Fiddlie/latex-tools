@@ -18,6 +18,7 @@
 *.nav
 *.snm
 *.vrb
+*.pdf
 
 # Latexmk output directory
 output/

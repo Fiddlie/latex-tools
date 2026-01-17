@@ -102,7 +102,7 @@ def find_repo_root() -> Optional[Path]:
 @click.option(
     "--id", "document_id",
     default=None,
-    help="Document ID (defaults to FD/DC/LTX/#####)",
+    help="Document ID (defaults to FD/DC/LTX/?????)",
 )
 @click.option(
     "--no-manifest",
