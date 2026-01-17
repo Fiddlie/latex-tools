@@ -75,6 +75,7 @@ Requirements specification documents for Fiddlie projects.
 - `\documentId{}` - Document ID (e.g., FD/REQ/PRJ/001)
 - `\revision{}` - Revision string (e.g., A-rc1, B)
 - `\draft` - Add draft watermark
+- `\setlogo{filename}` - Override the default logo (use in preamble)
 
 ### Document Structure
 

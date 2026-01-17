@@ -77,15 +77,12 @@
 \RequirePackage{geometry}
 \geometry{left=2cm, top=3cm, right=2cm, bottom=3cm, headheight=22pt}
 
-% Company logo commands - uses PDF logo from assets folder
-\gdef\@companylogo{}
-\newcommand{\companylogo}[1]{\gdef\@companylogo{#1}}
-
-\gdef\@bigcompanylogo{}
-\newcommand{\bigcompanylogo}[1]{\gdef\@bigcompanylogo{#1}}
-
-\companylogo{\includegraphics[height=0.6cm]{fiddlie-logo}}
-\bigcompanylogo{\includegraphics[height=1.2cm]{fiddlie-logo}}
+% Company logo setup
+% Use \setlogo{filename} in preamble to override the default logo
+% Use \companylogo or \companylogo[height=1.2cm] to output the logo
+\gdef\@logofile{fiddlie-logo}
+\newcommand{\setlogo}[1]{\gdef\@logofile{#1}}
+\newcommand{\companylogo}[1][height=0.6cm]{\includegraphics[#1]{\@logofile}}
 
 % Load TikZ and libraries for block diagrams
 \RequirePackage{tikz}
@@ -126,7 +123,7 @@
     \renewcommand{\footrulewidth}{1pt}
     \fancyhead[L]{\leftmark}
     \fancyhead[C]{\slshape\@shorttitle}
-    \fancyhead[R]{\@companylogo}
+    \fancyhead[R]{\companylogo}
     \fancyfoot[L]{\@revision}
     \fancyfoot[C]{\@date}
     \fancyfoot[R]{Page \thepage\ of \pageref{LastPage}}
@@ -146,9 +143,9 @@
 % Caption setup
 \captionsetup{justification=centering, margin=2cm}
 
-% First page title layout
+% First page title layout (using \\ rather than \par to control spacing)
 \renewcommand{\maketitle}{%
-    {\@bigcompanylogo}\\
+    {\companylogo[height=1.2cm]}\\
     \vspace{2cm}\\
     {\Huge\bfseries\@title}\\
     \noindent\rule{\textwidth}{1pt}

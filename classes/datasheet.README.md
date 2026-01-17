@@ -67,13 +67,15 @@ Professional product data sheets for Fiddlie products.
 - `\documentId{}` - Document ID (e.g., FD/DC/LTX/12345)
 - `\revision{}` - Revision string (e.g., A-rc1, B)
 - `\draft` - Add draft watermark
+- `\setlogo{filename}` - Override the default logo (use in preamble)
 
 ### Document Structure
 
 - `\maketitle` - Generate title page
 - `\makerevisionhistory` - Generate revision history table (requires manifest)
 - `\importantnotice` - Standard disclaimer section
-- `\companylogo[height]` - Insert company logo
+- `\companylogo` - Insert company logo (default height 0.6cm)
+- `\companylogo[height=1.2cm]` - Insert company logo with custom height
 - `\revisionnumber` - Output current revision inline
 
 ## Creating a New Datasheet
