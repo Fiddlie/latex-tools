@@ -1,0 +1,74 @@
+\documentclass{requirements}
+
+% Load manifest support and apply values from YAML file
+\usepackage{fiddlie-manifest}
+\loadmanifest{manifest.yaml}
+\applymanifest
+
+\begin{document}
+  % Front matter
+  \maketitle
+  \tableofcontents
+
+  \section{Introduction}
+
+  \subsection{Project Background}
+
+  % TODO: Add project background here
+
+  \subsection{Business Context}
+
+  % TODO: Add business context here
+
+  \makedocumentconventions
+
+  \section{Customer Requirements}
+
+  % TODO: Add description of customer requirements scope
+
+  \subsection{User Requirements}
+
+  \begin{longtable}
+    {|c|L{9cm}|c|} \hline \rowcolor{lightgray} \textbf{ID} & \textbf{Requirement}
+    & \textbf{Priority} \\
+    \hline \endfirsthead \hline \rowcolor{lightgray} \textbf{ID} & \textbf{Requirement}
+    & \textbf{Priority} \\
+    \hline \endhead
+
+    \reqid{CR-001} & TODO: Add requirement description
+    & \musthave \\
+    \hline \reqid{CR-002} & TODO: Add requirement description & \shouldhave \\
+    \hline \reqid{CR-003} & TODO: Add requirement description & \couldhave \\
+    \hline
+  \end{longtable}
+
+  \section{Technical Requirements}
+
+  % TODO: Add description of technical requirements scope
+
+  \begin{longtable}
+    {|c|L{9cm}|c|} \hline \rowcolor{lightgray} \textbf{ID} & \textbf{Requirement}
+    & \textbf{Priority} \\
+    \hline \endfirsthead \hline \rowcolor{lightgray} \textbf{ID} & \textbf{Requirement}
+    & \textbf{Priority} \\
+    \hline \endhead
+
+    \reqid{TR-001} & TODO: Add requirement description
+    & \musthave \\
+    \hline
+  \end{longtable}
+
+  \section{Appendix A: Glossary}
+
+  \begin{tabularx}
+    {\textwidth}{|l|X|} \hline \rowcolor{lightgray} \textbf{Term} & \textbf{Definition}
+    \\
+    \hline TODO & Add glossary terms here \\
+    \hline
+  \end{tabularx}
+
+  % Revision history is auto-generated from manifest
+  \makerevisionhistory
+
+  \importantnotice
+\end{document}

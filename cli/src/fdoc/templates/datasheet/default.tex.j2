@@ -1,0 +1,29 @@
+\documentclass[]{datasheet}
+
+% Load manifest support and apply values from YAML file
+\usepackage{fiddlie-manifest}
+\loadmanifest{manifest.yaml}
+\applymanifest
+
+\begin{document}
+  % Front matter
+  \maketitle
+  \tableofcontents
+
+  \section{Introduction}
+
+  % TODO: Add introduction content here
+
+  \section{Features}
+
+  % TODO: Add features content here
+
+  \section{Specifications}
+
+  % TODO: Add specifications content here
+
+  % Revision history is auto-generated from manifest
+  \makerevisionhistory
+
+  \importantnotice
+\end{document}

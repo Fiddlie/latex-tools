@@ -1,0 +1,41 @@
+\documentclass[]{datasheet}
+
+% Document details
+\title{ {{- title -}} }
+\shorttitle{ {{- shorttitle -}} }
+\author{ {{- author -}} }
+\date{ {{- date -}} }
+\documentId{ {{- document_id -}} }
+\revision{ {{- revision -}} }
+\draft
+
+\begin{document}
+  % Front matter
+  \maketitle
+  \tableofcontents
+
+  \section{Introduction}
+
+  % TODO: Add introduction content here
+
+  \section{Features}
+
+  % TODO: Add features content here
+
+  \section{Specifications}
+
+  % TODO: Add specifications content here
+
+  \section{Revision History}
+  \begin{tabularx}
+    {\textwidth}{XXXX} \hline \textbf{Revision} & \textbf{Date} & \textbf{Author}
+    & \textbf{Changes} \\
+    \hline
+    \revisionnumber & {{ date }} & {{ author }} & Initial version \\
+    & & & \\
+    & & & \\
+    \hline
+  \end{tabularx}
+
+  \importantnotice
+\end{document}

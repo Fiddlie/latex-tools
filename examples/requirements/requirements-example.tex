@@ -1,0 +1,73 @@
+\documentclass[]{requirements}
+
+% Document details
+\title{Project Requirements}
+\shorttitle{Requirements}
+\author{Ed Hill}
+\date{December 2025}
+\documentId{FD/DC/LTX/10021}
+\revision{A-rc1}
+\draft
+
+\begin{document}
+  % Front matter
+  \maketitle
+  \tableofcontents
+
+  \section{Introduction}
+
+  \subsection{Project Background}
+
+  % TODO - fill here
+
+  \subsection{Business Context}
+
+  % TODO - fill here
+
+  % Use the built-in document conventions from the requirements class
+  \makedocumentconventions
+
+  \section{Customer Requirements}
+
+  Customer requirements capture the needs and expectations of end users and stakeholders
+  who will interact with or be affected by the system.
+
+  \subsection{User Requirements}
+
+  \begin{longtable}
+    {|c|L{9cm}|c|} \hline \rowcolor{lightgray} \textbf{ID} & \textbf{Requirement}
+    & \textbf{Priority} \\
+    \hline \endfirsthead \hline \rowcolor{lightgray} \textbf{ID} & \textbf{Requirement}
+    & \textbf{Priority} \\
+    \hline \endhead
+
+    \reqid{CR-001} & This is a critical customer requirement
+    & \musthave \\
+    \hline \reqid{CR-002} & This is a high priority customer requirement & \shouldhave \\
+    \hline \reqid{CR-003} & This is a target customer requirement & \couldhave \\
+    \hline
+  \end{longtable}
+
+  \section{Appendix A: Glossary}
+
+  \begin{tabularx}
+    {\textwidth}{|l|X|} \hline \rowcolor{lightgray} \textbf{Term} & \textbf{Definition}
+    \\
+    \hline ABC & The first three letters of the alphabet \\
+    \hline 123 & The first three arabic numerals in the set of natural numbers $\mathbb{N}$  \\
+    \hline Do Re Mi & The first three notes in the sung scale \\
+    \hline
+  \end{tabularx}
+
+  \section{Revision History}
+  \begin{tabularx}
+    {\textwidth}{XXXX} \hline \textbf{Revision} & \textbf{Date} & \textbf{Author}
+    & \textbf{Changes} \\
+    \hline \revisionnumber & - & - & Initial version \\
+    & & & \\
+    & & & \\
+    \hline
+  \end{tabularx}
+
+  \importantnotice
+\end{document}

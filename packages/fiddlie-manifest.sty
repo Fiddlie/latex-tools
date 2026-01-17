@@ -1,0 +1,128 @@
+% fiddlie-manifest.sty - YAML manifest support for Fiddlie documents
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{fiddlie-manifest}[2025/09/01 Fiddlie Manifest Support]
+
+% Require LuaLaTeX
+\RequirePackage{iftex}
+\ifluatex\else
+  \PackageError{fiddlie-manifest}{This package requires LuaLaTeX}{}
+\fi
+
+\RequirePackage{luacode}
+
+% Load the manifest loader Lua module
+\begin{luacode}
+  -- Try to find and load the manifest-loader module
+  local function load_manifest_module()
+    -- Try kpse first
+    local loader_path = kpse.find_file("manifest-loader.lua", "lua")
+    if loader_path then
+      return dofile(loader_path)
+    end
+
+    -- Try relative to this package
+    local pkg_path = kpse.find_file("fiddlie-manifest.sty", "tex")
+    if pkg_path then
+      local dir = pkg_path:match("(.*/)")
+      loader_path = dir .. "../lua/manifest-loader.lua"
+      local f = io.open(loader_path, "r")
+      if f then
+        f:close()
+        return dofile(loader_path)
+      end
+    end
+
+    -- Return a stub if loading fails
+    return {
+      load = function() return false end,
+      get = function() return "" end,
+      is_loaded = function() return false end,
+      count = function() return 0 end,
+      foreach = function() end,
+    }
+  end
+
+  manifest = load_manifest_module()
+\end{luacode}
+
+% Flag for whether manifest is loaded
+\newif\ifmanifestloaded
+\manifestloadedfalse
+
+% Load a manifest file
+\newcommand{\loadmanifest}[1]{%
+  \directlua{
+    if manifest.load("\luaescapestring{#1}") then
+      tex.print("\\manifestloadedtrue")
+    end
+  }%
+}
+
+% Get a value from the manifest
+\newcommand{\manifestget}[1]{%
+  \directlua{tex.print(manifest.get("\luaescapestring{#1}", ""))}%
+}
+
+% Get a value with a default fallback
+\newcommand{\manifestgetdefault}[2]{%
+  \directlua{tex.print(manifest.get("\luaescapestring{#1}", "\luaescapestring{#2}"))}%
+}
+
+% Get count of array items
+\newcommand{\manifestcount}[1]{%
+  \directlua{tex.print(manifest.count("\luaescapestring{#1}"))}%
+}
+
+% Conditional based on manifest key existence
+\newcommand{\ifmanifesthas}[3]{%
+  \directlua{
+    local val = manifest.get("\luaescapestring{#1}", nil)
+    if val and val ~= "" then
+      tex.print("\luaescapestring{#2}")
+    else
+      tex.print("\luaescapestring{#3}")
+    end
+  }%
+}
+
+% Apply manifest values to document metadata
+\newcommand{\applymanifest}{%
+  \ifmanifestloaded
+    \title{\manifestget{document.title}}%
+    \author{\manifestget{document.author}}%
+    \date{\manifestget{document.date}}%
+    \revision{\manifestget{revision.current}}%
+    \documentId{\manifestget{document.id}}%
+    \shorttitle{\manifestget{document.shorttitle}}%
+    \directlua{
+      if manifest.get("revision.draft", "false") == "true" then
+        tex.print("\\draft")
+      end
+    }%
+  \fi
+}
+
+% Generate revision history table from manifest
+\newcommand{\makerevisionhistory}{%
+  \section{Revision History}
+  \begin{tabularx}{\textwidth}{XXXX}
+    \hline
+    \textbf{Revision} & \textbf{Date} & \textbf{Author} & \textbf{Changes} \\
+    \hline
+    \luadirect{
+      local count = manifest.count("history")
+      for i = 1, count do
+        local rev = manifest.get("history." .. i .. ".revision", "")
+        local date = manifest.get("history." .. i .. ".date", "")
+        local author = manifest.get("history." .. i .. ".author", "")
+        local changes = manifest.get("history." .. i .. ".changes", "")
+        tex.print(rev .. " & " .. date .. " & " .. author .. " & " .. changes .. " \\\\")
+      end
+      tex.print(" & & & \\\\")
+      tex.print(" & & & \\\\")
+    }
+    \hline
+  \end{tabularx}
+}
+
+\endinput

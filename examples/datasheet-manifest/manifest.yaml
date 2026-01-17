@@ -1,0 +1,17 @@
+# Document metadata for manifest-based datasheet
+document:
+  title: "Fiddlie Widget Datasheet"
+  shorttitle: "Widget"
+  author: "Ed Hill"
+  date: "January 2025"
+  id: "FD/DC/LTX/00001"
+
+revision:
+  current: "A-rc1"
+  draft: true
+
+history:
+  - revision: "A-rc1"
+    date: "2025-01-17"
+    author: "Ed Hill"
+    changes: "Initial draft"

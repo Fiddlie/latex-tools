@@ -1,0 +1,17 @@
+\documentclass[]{datasheet}
+
+% Load manifest support and apply values from YAML file
+\usepackage{fiddlie-manifest}
+\loadmanifest{manifest.yaml}
+\applymanifest
+
+\begin{document}
+  \maketitle
+  \tableofcontents
+
+  % Add your content here
+
+  \makerevisionhistory
+
+  \importantnotice
+\end{document}

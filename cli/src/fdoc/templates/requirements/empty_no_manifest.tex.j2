@@ -1,0 +1,30 @@
+\documentclass{requirements}
+
+% Document details
+\title{ {{- title -}} }
+\shorttitle{ {{- shorttitle -}} }
+\author{ {{- author -}} }
+\date{ {{- date -}} }
+\documentId{ {{- document_id -}} }
+\revision{ {{- revision -}} }
+\draft
+
+\begin{document}
+  \maketitle
+  \tableofcontents
+
+  % Add your content here
+
+  \section{Revision History}
+  \begin{tabularx}
+    {\textwidth}{XXXX} \hline \textbf{Revision} & \textbf{Date} & \textbf{Author}
+    & \textbf{Changes} \\
+    \hline
+    \revisionnumber & {{ date }} & {{ author }} & Initial version \\
+    & & & \\
+    & & & \\
+    \hline
+  \end{tabularx}
+
+  \importantnotice
+\end{document}

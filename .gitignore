@@ -1,0 +1,31 @@
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.lof
+*.lot
+*.idx
+*.ilg
+*.ind
+*.nav
+*.snm
+*.vrb
+
+# Generated PDFs (keep source, not output)
+examples/*.pdf
+
+# Latexmk output directory
+output/
+
+# Editor files
+*.swp
+*~
+.DS_Store

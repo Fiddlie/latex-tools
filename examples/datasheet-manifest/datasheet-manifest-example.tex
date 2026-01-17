@@ -1,0 +1,43 @@
+\documentclass[]{datasheet}
+
+% Load manifest support and apply document metadata
+\usepackage{fiddlie-manifest}
+\loadmanifest{manifest.yaml}
+\applymanifest
+
+\begin{document}
+  % Front matter
+  \maketitle
+  \tableofcontents
+
+  \section{Introduction}
+
+  This document demonstrates using a YAML manifest file to define document
+  metadata instead of manually setting \verb|\title{}|, \verb|\author{}|, etc.
+
+  The manifest file contains all document metadata in a structured format,
+  making it easier to manage and update.
+
+  \section{Features}
+
+  \subsection{Automatic Metadata}
+  The \verb|\applymanifest| command reads the manifest and sets:
+  \begin{itemize}
+    \item Document title
+    \item Short title (for headers)
+    \item Author
+    \item Date
+    \item Revision number
+    \item Document ID
+    \item Draft watermark (if enabled)
+  \end{itemize}
+
+  \subsection{Revision History}
+  The \verb|\makerevisionhistory| command generates a revision table
+  from the manifest's history section.
+
+  % Auto-generated revision history from manifest
+  \makerevisionhistory
+
+  \importantnotice
+\end{document}
