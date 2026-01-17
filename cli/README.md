@@ -63,6 +63,56 @@ Options:
 - `--output-dir, -o PATH` - Output directory (defaults to current directory)
 - `--folder-name, -f TEXT` - Custom folder name (defaults to sanitized title)
 
+### `fdoc list`
+
+List all documents in the current repository.
+
+```bash
+fdoc list
+```
+
+Displays a table showing:
+
+- Document name (folder name)
+- Document type (datasheet, requirements)
+- Whether the document uses a manifest file
+
+### `fdoc build`
+
+Build a document using latexmk.
+
+```bash
+fdoc build my-datasheet
+fdoc build .                    # Build current directory
+fdoc build my-datasheet --clean # Clean before building
+fdoc build my-datasheet -pvc    # Watch and rebuild on changes
+```
+
+Options:
+
+- `--clean, -c` - Clean build artifacts before building
+- `--continuous, -pvc` - Continuously watch for changes and rebuild
+
+The `DOCNAME` argument can be:
+
+- A full document folder name (e.g., `my-datasheet`)
+- A partial name if unambiguous (e.g., `datasheet` if only one matches)
+- `.` to build the document in the current directory
+
+### `fdoc update`
+
+Update the latex-tools submodule to the latest version.
+
+```bash
+fdoc update
+fdoc update --ref v1.2.0  # Update to specific tag
+fdoc update --ref main    # Update to specific branch
+```
+
+Options:
+
+- `--ref TEXT` - Specific git ref (branch, tag, or commit) to checkout
+
 ## Examples
 
 ### Create a new documentation repository

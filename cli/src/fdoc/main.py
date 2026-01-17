@@ -5,6 +5,9 @@ import click
 from fdoc import __version__
 from fdoc.commands.init import init
 from fdoc.commands.create import create
+from fdoc.commands.list import list_cmd
+from fdoc.commands.build import build
+from fdoc.commands.update import update
 
 
 @click.group()
@@ -20,6 +23,9 @@ def cli():
 
 cli.add_command(init)
 cli.add_command(create)
+cli.add_command(list_cmd, name="list")
+cli.add_command(build)
+cli.add_command(update)
 
 
 if __name__ == "__main__":
