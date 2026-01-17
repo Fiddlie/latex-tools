@@ -5,13 +5,13 @@ A command-line tool for managing Fiddlie documentation repositories and creating
 ## Installation
 
 ```bash
-pip install fdoc
+pip install git+ssh://git@github.com:Fiddlie/latex-tools.git
 ```
 
 Or for isolated installation:
 
 ```bash
-pipx install fdoc
+pipx install git+ssh://git@github.com:Fiddlie/latex-tools.git
 ```
 
 ## Commands
@@ -134,7 +134,7 @@ fdoc create datasheet
 ```bash
 fdoc create datasheet \
   --title "ACME Power Module PM-500" \
-  --id "FD/DC/PM/500"
+  --id "FD/DC/LTX/00542"
 ```
 
 ### Create a requirements document without manifest
@@ -142,7 +142,7 @@ fdoc create datasheet \
 ```bash
 fdoc create requirements \
   --title "Project Alpha Requirements" \
-  --id "FD/REQ/ALPHA/001" \
+  --id "FD/DC/LTX/01234" \
   --no-manifest \
   --template empty
 ```

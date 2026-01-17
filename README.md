@@ -17,7 +17,7 @@ The easiest way to get started is with the [`fdoc` CLI tool](cli/README.md):
 
 ```bash
 # Install the CLI
-pip install fdoc
+pip install git+ssh://git@github.com:Fiddlie/latex-tools.git
 
 # Create a new documentation repository
 fdoc init my-docs
@@ -30,11 +30,13 @@ fdoc create datasheet --title "My Product" --id "FD/DC/001"
 ### Manual Setup
 
 1. Add this repository as a submodule:
+
    ```bash
    git submodule add git@github.com:fiddlie/latex-tools.git latex-tools
    ```
 
 2. Create a `.latexmkrc` in your project root:
+
    ```perl
    use File::Basename;
    use File::Spec;
