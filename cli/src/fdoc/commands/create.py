@@ -145,9 +145,9 @@ def create(
 
     Examples:
 
-        fdoc create datasheet --title "Power Supply Unit" --id "FD/DC/PSU/001"
+        fdoc create datasheet --title "Power Supply Unit" --id "FD/DC/LTX/00001"
 
-        fdoc create requirements --title "Project Requirements" --id "FD/REQ/001" --no-manifest
+        fdoc create requirements --title "Project Requirements" --id "FD/DC/LTX/00001" --no-manifest
 
         fdoc create datasheet  # Creates "New Datasheet 1" with default ID
     """
