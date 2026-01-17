@@ -49,13 +49,21 @@
 \newif\ifmanifestloaded
 \manifestloadedfalse
 
-% Load a manifest file
+% Load a manifest file and register it as a dependency for latexmk
 \newcommand{\loadmanifest}[1]{%
   \directlua{
-    if manifest.load("\luaescapestring{#1}") then
+    local filepath = "\luaescapestring{#1}"
+    if manifest.load(filepath) then
       tex.print("\\manifestloadedtrue")
     end
   }%
+  % Record the manifest file as a dependency using \openin (TeX primitive)
+  % This makes latexmk aware the file is used and should trigger rebuilds
+  \begingroup
+    \newread\manifestreader
+    \openin\manifestreader=#1
+    \closein\manifestreader
+  \endgroup
 }
 
 % Get a value from the manifest

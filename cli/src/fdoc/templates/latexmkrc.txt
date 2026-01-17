@@ -7,3 +7,6 @@ $ENV{'TEXINPUTS'} = "$latex_tools/classes//:$latex_tools/packages//:$latex_tools
 
 $pdf_mode = 4;  # Use LuaLaTeX
 $lualatex = 'lualatex -interaction=nonstopmode -synctex=1 -shell-escape %O %S';
+
+$recorder = 1;
+push @generated_exts, 'yaml';

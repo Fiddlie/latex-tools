@@ -1,13 +1,9 @@
 \documentclass[]{requirements}
 
-% Document details
-\title{Project Requirements}
-\shorttitle{Requirements}
-\author{Ed Hill}
-\date{December 2025}
-\documentId{FD/DC/LTX/10021}
-\revision{A-rc1}
-\draft
+% Load manifest support and apply document metadata
+\usepackage{fiddlie-manifest}
+\loadmanifest{manifest.yaml}
+\applymanifest
 
 \begin{document}
   % Front matter
@@ -59,15 +55,8 @@
     \hline
   \end{tabularx}
 
-  \section{Revision History}
-  \begin{tabularx}
-    {\textwidth}{XXXX} \hline \textbf{Revision} & \textbf{Date} & \textbf{Author}
-    & \textbf{Changes} \\
-    \hline \revisionnumber & - & - & Initial version \\
-    & & & \\
-    & & & \\
-    \hline
-  \end{tabularx}
+  % Auto-generated revision history from manifest
+  \makerevisionhistory
 
   \importantnotice
 \end{document}
