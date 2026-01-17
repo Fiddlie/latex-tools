@@ -4,8 +4,8 @@ LaTeX document classes and packages for Fiddlie documentation.
 
 ## Document Classes
 
-- **datasheet** - Professional product data sheets
-- **requirements** - Structured requirements specification documents
+- **[datasheet](classes/datasheet.README.md)** - Professional product data sheets
+- **[requirements](classes/requirements.README.md)** - Structured requirements specification documents
 
 ## Usage
 
@@ -13,7 +13,7 @@ This repository is designed to be used as a git submodule in documentation repos
 
 ### Quick Start with fdoc CLI
 
-The easiest way to get started is with the `fdoc` CLI tool:
+The easiest way to get started is with the [`fdoc` CLI tool](cli/README.md):
 
 ```bash
 # Install the CLI
