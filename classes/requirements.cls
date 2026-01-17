@@ -170,4 +170,50 @@
   \hline
 }
 
+% Glossary table environment
+% Usage:
+%   \begin{glossarytable}
+%     \term{ABC}{The first three letters of the alphabet}
+%     \term{API}{Application Programming Interface}
+%   \end{glossarytable}
+%
+% Optional argument sets the term column width (default 3cm):
+%   \begin{glossarytable}[4cm]
+%     ...
+%   \end{glossarytable}
+
+% Glossary table environment using longtable
+% Usage:
+%   \begin{glossarytable}
+%     \term{ABC}{The first three letters of the alphabet}
+%   \end{glossarytable}
+%
+% Optional arguments: [term width][definition width] (defaults: 3cm, 12cm)
+%   \begin{glossarytable}[4cm]           % 4cm term, 12cm definition
+%   \begin{glossarytable}[4cm][10cm]     % 4cm term, 10cm definition
+
+\NewDocumentEnvironment{glossarytable}{O{3cm}O{12cm}}{%
+  \begin{longtable}{|L{#1}|L{#2}|}
+    \hline
+    \rowcolor{lightgray}
+    \textbf{Term} & \textbf{Definition} \\
+    \hline
+    \endfirsthead
+    \hline
+    \rowcolor{lightgray}
+    \textbf{Term} & \textbf{Definition} \\
+    \hline
+    \endhead
+}{%
+  \end{longtable}
+}
+
+% Glossary term command for use inside glossarytable
+% Usage: \term{Term}{Definition}
+% Example: \term{API}{Application Programming Interface}
+\newcommand{\term}[2]{%
+  \textbf{#1} & #2 \\
+  \hline
+}
+
 \endinput

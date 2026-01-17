@@ -92,6 +92,10 @@ Requirements specification documents for Fiddlie projects.
 - `\couldhave` - Gray-highlighted "COULD" priority cell
 - `\req{ID}{Description}{Priority}` - Add a requirement row (use inside `requirementstable`)
 
+### Glossary Formatting
+
+- `\term{Term}{Definition}` - Add a glossary entry (use inside `glossarytable`)
+
 ### Table Column Types
 
 - `L{width}` - Left-aligned paragraph column
@@ -165,6 +169,30 @@ For more control, you can create tables manually:
   \reqid{CR-001} & System shall respond within 100ms & \musthave \\
   \hline
 \end{longtable}
+```
+
+## Glossary Table
+
+Use the `glossarytable` environment with the `\term` command for glossary sections:
+
+```latex
+\begin{glossarytable}
+  \term{API}{Application Programming Interface}
+  \term{REST}{Representational State Transfer}
+  \term{JSON}{JavaScript Object Notation}
+\end{glossarytable}
+```
+
+Optional arguments set the column widths (defaults: 3cm term, 12cm definition):
+
+```latex
+\begin{glossarytable}[4cm]          % 4cm term column, 12cm definition
+  \term{Longer Term}{Definition text here}
+\end{glossarytable}
+
+\begin{glossarytable}[4cm][10cm]    % 4cm term, 10cm definition
+  \term{Longer Term}{Shorter definition column}
+\end{glossarytable}
 ```
 
 ## Requirement ID Prefixes
