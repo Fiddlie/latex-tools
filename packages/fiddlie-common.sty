@@ -87,6 +87,11 @@
 \companylogo{\includegraphics[height=0.6cm]{fiddlie-logo}}
 \bigcompanylogo{\includegraphics[height=1.2cm]{fiddlie-logo}}
 
+% Load TikZ libraries for block diagrams
+\usetikzlibrary{positioning, shapes, arrows.meta, fit, babel, quotes}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background, main}
+
 % Command \revision{} can be used to include a document revision number in footer.
 \gdef\@revision{}
 \newcommand{\revision}[1]{\gdef\@revision{#1}}

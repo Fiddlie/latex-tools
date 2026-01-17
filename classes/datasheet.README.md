@@ -10,7 +10,7 @@ Professional product data sheets for Fiddlie products.
 \title{Product Name}
 \shorttitle{Short Name}
 \author{Author Name}
-\date{September 2025}
+\date{January 2026}
 \documentId{FD/DC/LTX/12345}
 \revision{A-rc1}
 \draft  % Optional: adds draft watermark
@@ -58,6 +58,8 @@ Professional product data sheets for Fiddlie products.
 
 ## Commands
 
+### Document Metadata
+
 - `\title{}` - Full document title
 - `\shorttitle{}` - Abbreviated title for headers
 - `\author{}` - Document author
@@ -65,7 +67,40 @@ Professional product data sheets for Fiddlie products.
 - `\documentId{}` - Document ID (e.g., FD/DC/LTX/12345)
 - `\revision{}` - Revision string (e.g., A-rc1, B)
 - `\draft` - Add draft watermark
+
+### Document Structure
+
 - `\maketitle` - Generate title page
+- `\makerevisionhistory` - Generate revision history table (requires manifest)
+- `\importantnotice` - Standard disclaimer section
 - `\companylogo[height]` - Insert company logo
 - `\revisionnumber` - Output current revision inline
-- `\importantnotice` - Standard disclaimer section
+
+## Creating a New Datasheet
+
+Use the `fdoc` CLI to create a new datasheet:
+
+```bash
+# With full options
+fdoc create datasheet --title "Power Supply Unit" --id "FD/DC/PSU/001"
+
+# Quick start with defaults
+fdoc create datasheet
+
+# Without manifest (manual metadata)
+fdoc create datasheet --title "My Product" --no-manifest
+```
+
+## Building
+
+From the document directory:
+
+```bash
+fdoc build .
+```
+
+Or from the repository root:
+
+```bash
+fdoc build power-supply-unit
+```
