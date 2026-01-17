@@ -118,6 +118,33 @@ The optional argument sets the requirement column width (default 9cm):
 \end{requirementstable}
 ```
 
+## Requirement ID Tracking
+
+The class automatically tracks all requirement IDs to prevent duplicates and help you find the next available ID.
+
+### Duplicate Detection
+
+Requirement IDs use a **global numeric counter** across all prefixes. This means you cannot have both `CR-010` and `TR-010` in the same document - they share the same numeric ID (010). If you accidentally reuse a number, compilation will fail with a clear error:
+
+```
+! Duplicate requirement ID: TR-010 (conflicts with CR-010)
+```
+
+### Finding the Next Available ID
+
+After compilation, check the log output for a summary showing the next available ID:
+
+```
+========================================
+REQUIREMENTS SUMMARY
+  Total requirements: 47
+  Highest used ID:    052
+  Next available:     053
+========================================
+```
+
+The "next available" is always the highest used number plus one. This prevents accidentally reusing IDs from deleted requirements. For example, if you have requirements 001, 002, and 050, the next available is **051** (not 003).
+
 ### Manual Table (Advanced)
 
 For more control, you can create tables manually:

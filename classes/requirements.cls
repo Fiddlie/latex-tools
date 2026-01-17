@@ -38,6 +38,68 @@
 \newcommand{\shouldhave}{\cellcolor{tabyellow!30}\priority{Should}}
 \newcommand{\couldhave}{\cellcolor{lightgray}\priority{Could}}
 
+% ============================================================================
+% Requirement ID Tracking and Duplicate Detection
+% ============================================================================
+% This system tracks all requirement IDs used in the document to:
+%   1. Detect duplicate IDs (same number used twice, even with different prefixes)
+%   2. Report the next available ID in the compilation log (highest number + 1)
+%
+% IDs are extracted from the format PREFIX-NNN (e.g., CR-001, TR-042).
+% The numeric portion is tracked globally - you cannot have CR-010 and TR-010.
+%
+% Usage remains unchanged:
+%   \req{CR-001}{Description}{\musthave}
+%
+% At the end of compilation, the log will show:
+%   "Requirements: Next available ID is XXX (highest used: YYY)"
+% ============================================================================
+
+% Load the requirement tracking Lua module
+% Note: Use \luaescapestring and avoid bare % in patterns (TeX interprets as comment)
+\directlua{
+  local function load_reqtracker_module()
+    local loader_path = kpse.find_file("req-tracker.lua", "lua")
+    if loader_path then
+      return dofile(loader_path)
+    end
+    local cls_path = kpse.find_file("requirements.cls", "tex")
+    if cls_path then
+      local dir = cls_path:match("(.-)[^/]*$")
+      loader_path = dir .. "../lua/req-tracker.lua"
+      local f = io.open(loader_path, "r")
+      if f then
+        f:close()
+        return dofile(loader_path)
+      end
+    end
+    texio.write_nl("term and log", "WARNING: req-tracker.lua not found")
+    return {
+      register = function() return true, nil end,
+      getMaxId = function() return 0 end,
+      getCount = function() return 0 end,
+      getNextId = function() return "001" end,
+      printSummary = function() end,
+    }
+  end
+  reqtracker = load_reqtracker_module()
+}
+
+% Internal command to check and register a requirement ID
+% Issues an error if duplicate
+\newcommand{\@registerReqId}[1]{%
+  \directlua{
+    local id = "\luaescapestring{#1}"
+    local ok, existing = reqtracker.register(id)
+    if not ok then
+      tex.error("Duplicate requirement ID: " .. id .. " (conflicts with " .. existing .. ")")
+    end
+  }%
+}
+
+% Hook to print summary at end of document
+\AtEndDocument{\directlua{reqtracker.printSummary()}}
+
 % Table column types
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
@@ -101,7 +163,9 @@
 % Requirement row command for use inside requirementstable
 % Usage: \req{ID}{Description}{Priority}
 % Example: \req{CR-001}{The system shall respond within 100ms}{\musthave}
+% The ID is registered for duplicate detection and next-ID tracking.
 \newcommand{\req}[3]{%
+  \@registerReqId{#1}%
   \reqid{#1} & #2 & #3 \\
   \hline
 }
