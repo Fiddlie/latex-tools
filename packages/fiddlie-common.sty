@@ -87,7 +87,8 @@
 \companylogo{\includegraphics[height=0.6cm]{fiddlie-logo}}
 \bigcompanylogo{\includegraphics[height=1.2cm]{fiddlie-logo}}
 
-% Load TikZ libraries for block diagrams
+% Load TikZ and libraries for block diagrams
+\RequirePackage{tikz}
 \usetikzlibrary{positioning, shapes, arrows.meta, fit, babel, quotes}
 \pgfdeclarelayer{background}
 \pgfsetlayers{background, main}
@@ -147,14 +148,14 @@
 
 % First page title layout
 \renewcommand{\maketitle}{%
-    {\@bigcompanylogo}\par
-    \vspace{2cm}
-    {\Huge\bfseries\@title}\par
+    {\@bigcompanylogo}\\
+    \vspace{2cm}\\
+    {\Huge\bfseries\@title}\\
     \noindent\rule{\textwidth}{1pt}
-    \vspace{0.5cm}\par
-    {\Large Revision \@revision, \@date}\par
-    \vspace{0.2cm}
-    \textit{\@documentId}\par
+    \vspace{0.5cm}\\
+    {\Large Revision \@revision, \@date}
+    \vspace{0.2cm}\\
+    \textit{\@documentId}\\
     \medskip
     \pagestyle{normalpage}
     \thispagestyle{firstpage}

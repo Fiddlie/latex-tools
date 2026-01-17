@@ -19,12 +19,10 @@
 \RequirePackage{enumitem}
 \RequirePackage{array}
 \RequirePackage{colortbl}
-\RequirePackage{tikz}
+% Note: TikZ is loaded by fiddlie-common
 
-% Load TikZ libraries for block diagrams
-\usetikzlibrary{positioning, shapes, arrows.meta, fit, babel, quotes}
-\pgfdeclarelayer{background}
-\pgfsetlayers{background, main}
+% xparse for advanced command definitions
+\RequirePackage{xparse}
 
 % Additional colour definitions for requirements
 \definecolor{headergray}{RGB}{80, 80, 80}
@@ -70,6 +68,42 @@
     \item \textbf{Should} --- Important requirement; non-compliance requires justification
     \item \textbf{Could} --- Desirable requirement; included if resources permit
   \end{itemize}
+}
+
+% Requirements table environment
+% Usage:
+%   \begin{requirementstable}
+%     \req{CR-001}{System shall do something}{\musthave}
+%     \req{CR-002}{System should do something else}{\shouldhave}
+%   \end{requirementstable}
+%
+% Optional argument sets the requirement column width (default 9cm):
+%   \begin{requirementstable}[11cm]
+%     ...
+%   \end{requirementstable}
+
+\NewDocumentEnvironment{requirementstable}{O{9cm}}{%
+  \begin{longtable}{|c|L{#1}|c|}
+    \hline
+    \rowcolor{lightgray}
+    \textbf{ID} & \textbf{Requirement} & \textbf{Priority} \\
+    \hline
+    \endfirsthead
+    \hline
+    \rowcolor{lightgray}
+    \textbf{ID} & \textbf{Requirement} & \textbf{Priority} \\
+    \hline
+    \endhead
+}{%
+  \end{longtable}
+}
+
+% Requirement row command for use inside requirementstable
+% Usage: \req{ID}{Description}{Priority}
+% Example: \req{CR-001}{The system shall respond within 100ms}{\musthave}
+\newcommand{\req}[3]{%
+  \reqid{#1} & #2 & #3 \\
+  \hline
 }
 
 \endinput

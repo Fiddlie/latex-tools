@@ -89,6 +89,7 @@ Requirements specification documents for Fiddlie projects.
 - `\musthave` - Red-highlighted "MUST" priority cell
 - `\shouldhave` - Yellow-highlighted "SHOULD" priority cell
 - `\couldhave` - Gray-highlighted "COULD" priority cell
+- `\req{ID}{Description}{Priority}` - Add a requirement row (use inside `requirementstable`)
 
 ### Table Column Types
 
@@ -96,7 +97,29 @@ Requirements specification documents for Fiddlie projects.
 - `C{width}` - Center-aligned paragraph column
 - `R{width}` - Right-aligned paragraph column
 
-## Requirements Table Example
+## Requirements Table
+
+Use the `requirementstable` environment with the `\req` command for easy table creation:
+
+```latex
+\begin{requirementstable}
+  \req{CR-001}{System shall respond within 100ms}{\musthave}
+  \req{CR-002}{System should support 1000 concurrent users}{\shouldhave}
+  \req{CR-003}{System could provide dark mode}{\couldhave}
+\end{requirementstable}
+```
+
+The optional argument sets the requirement column width (default 9cm):
+
+```latex
+\begin{requirementstable}[11cm]
+  \req{CR-001}{A longer requirement description that needs more space}{\musthave}
+\end{requirementstable}
+```
+
+### Manual Table (Advanced)
+
+For more control, you can create tables manually:
 
 ```latex
 \begin{longtable}{|c|L{9cm}|c|}
@@ -112,10 +135,6 @@ Requirements specification documents for Fiddlie projects.
   \endhead
 
   \reqid{CR-001} & System shall respond within 100ms & \musthave \\
-  \hline
-  \reqid{CR-002} & System should support 1000 concurrent users & \shouldhave \\
-  \hline
-  \reqid{CR-003} & System could provide dark mode & \couldhave \\
   \hline
 \end{longtable}
 ```
