@@ -17,7 +17,7 @@ The easiest way to get started is with the [`fdoc` CLI tool](cli/README.md):
 
 ```bash
 # Install the CLI
-pip install git+ssh://git@github.com:Fiddlie/latex-tools.git
+pip install git+ssh://git@github.com/Fiddlie/latex-tools.git
 
 # Create a new documentation repository
 fdoc init my-docs

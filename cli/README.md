@@ -5,13 +5,13 @@ A command-line tool for managing Fiddlie documentation repositories and creating
 ## Installation
 
 ```bash
-pip install git+ssh://git@github.com:Fiddlie/latex-tools.git
+pip install git+ssh://git@github.com/Fiddlie/latex-tools.git
 ```
 
 Or for isolated installation:
 
 ```bash
-pipx install git+ssh://git@github.com:Fiddlie/latex-tools.git
+pipx install git+ssh://git@github.com/Fiddlie/latex-tools.git
 ```
 
 ## Commands
