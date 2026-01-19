@@ -31,6 +31,7 @@ This creates:
 - `.gitignore` for LaTeX artifacts
 - `.latexmkrc` configured for the submodule
 - `.vscode/settings.json` for LaTeX Workshop
+- `.github/workflows/build.yml` for CI builds
 - `README.md` with setup instructions
 
 Options:
@@ -104,6 +105,8 @@ fdoc update
 fdoc update --ref v1.2.0  # Update to specific tag
 fdoc update --ref main    # Update to specific branch
 ```
+
+This also syncs configuration files from latex-tools templates, including the GitHub Actions workflow (`.github/workflows/build.yml`).
 
 Options:
 

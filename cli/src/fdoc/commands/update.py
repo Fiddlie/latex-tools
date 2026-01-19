@@ -6,6 +6,7 @@ from pathlib import Path
 import click
 
 from fdoc.commands.create import find_repo_root
+from fdoc.templates import get_template
 
 
 @click.command()
@@ -68,13 +69,17 @@ def update(ref: str):
         # Get the new commit info
         commit_info = _get_commit_info(latex_tools_path)
 
+        # Sync configuration files from templates
+        click.echo("  Syncing configuration files...")
+        _sync_github_workflow(repo_root)
+
         click.echo()
         click.secho("Successfully updated latex-tools!", fg="green", bold=True)
         if commit_info:
             click.echo(f"  Now at: {commit_info}")
         click.echo()
-        click.echo("Don't forget to commit the submodule update:")
-        click.echo("  git add latex-tools")
+        click.echo("Don't forget to commit the changes:")
+        click.echo("  git add latex-tools .github/workflows/build.yml")
         click.echo('  git commit -m "Update latex-tools"')
 
     except subprocess.CalledProcessError as e:
@@ -111,3 +116,11 @@ def _get_commit_info(repo_path: Path) -> str | None:
         return result.stdout.strip()
     except subprocess.CalledProcessError:
         return None
+
+
+def _sync_github_workflow(repo_root: Path):
+    """Sync the GitHub Actions workflow from the latex-tools templates."""
+    workflows_dir = repo_root / ".github" / "workflows"
+    workflows_dir.mkdir(parents=True, exist_ok=True)
+    content = get_template("github_workflow.yml")
+    (workflows_dir / "build.yml").write_text(content)

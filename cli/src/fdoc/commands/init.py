@@ -78,6 +78,9 @@ def init(folder_name: str, submodule_url: str, no_commit: bool):
         _write_vscode_settings(folder_path)
         click.echo("  Created .vscode/settings.json")
 
+        _write_github_workflow(folder_path)
+        click.echo("  Created .github/workflows/build.yml")
+
         _write_readme(folder_path, folder_name)
         click.echo("  Created README.md")
 
@@ -140,6 +143,14 @@ def _write_vscode_settings(folder_path: Path):
     vscode_dir.mkdir(exist_ok=True)
     content = get_template("vscode_settings.json")
     (vscode_dir / "settings.json").write_text(content)
+
+
+def _write_github_workflow(folder_path: Path):
+    """Write the GitHub Actions workflow for building documents."""
+    workflows_dir = folder_path / ".github" / "workflows"
+    workflows_dir.mkdir(parents=True, exist_ok=True)
+    content = get_template("github_workflow.yml")
+    (workflows_dir / "build.yml").write_text(content)
 
 
 def _write_readme(folder_path: Path, project_name: str):
