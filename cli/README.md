@@ -113,6 +113,38 @@ Options:
 
 - `--ref TEXT` - Specific git ref (branch, tag, or commit) to checkout
 
+### `fdoc name`
+
+Generate a pretty name for a document based on its manifest metadata.
+
+```bash
+fdoc name my-datasheet
+fdoc name .                          # Use current directory
+fdoc name my-datasheet --safe        # Filename-safe output
+fdoc name my-datasheet --no-spaces   # Replace spaces with underscores
+```
+
+The generated name format depends on whether the document is a draft:
+
+- Non-draft: `{id}-{revision} - {title}`
+- Draft: `{id}-{revision}-{commit_hash} - {title}`
+
+Examples:
+
+- `FD/DC/LTX/10010-A - Datasheet Doc` (non-draft)
+- `FD/DC/LTX/10010-B-rc2-1a2b3c - My Document` (draft)
+
+Options:
+
+- `--safe, -s` - Replace filename-unsafe characters (`/`, `\`, `:`, etc.) with hyphens
+- `--no-spaces` - Replace all spaces with underscores
+
+The `DOCNAME` argument can be:
+
+- A full document folder name (e.g., `my-datasheet`)
+- A partial name if unambiguous (e.g., `datasheet` if only one matches)
+- `.` to use the document in the current directory
+
 ## Examples
 
 ### Create a new documentation repository
