@@ -201,7 +201,7 @@ def create(
         "title": title,
         "shorttitle": shorttitle,
         "author": author,
-        "date": datetime.now().strftime("%d %B %Y"),
+        "date": datetime.now().strftime("%d %b %Y"),
         "document_id": document_id,
         "revision": "A-rc1",
         "doctype": doctype,
