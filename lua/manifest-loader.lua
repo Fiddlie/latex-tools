@@ -15,10 +15,13 @@ local function simple_yaml_parse(content)
       local trimmed = line:match("^%s*(.-)%s*$")
 
       -- Pop stack to find parent, but be careful with list item continuations
+      local is_list_item_line = trimmed:match("^%-") ~= nil
       while #stack > 1 do
         local top = stack[#stack]
-        -- Pop if we're at same or lower indent, unless this is a continuation of a list item
-        if top.indent >= indent and not (top.is_list_item and indent > stack[#stack - 1].indent) then
+        -- Pop if we're at same or lower indent
+        -- Exception: keep the stack if this is a continuation line (not a list item) with higher indent than grandparent
+        local dominated_by_list_item = top.is_list_item and not is_list_item_line and indent > stack[#stack - 1].indent
+        if top.indent >= indent and not dominated_by_list_item then
           table.remove(stack)
         else
           break
