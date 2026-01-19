@@ -71,11 +71,7 @@ List all documents in the current repository.
 fdoc list
 ```
 
-Displays a table showing:
-
-- Document name (folder name)
-- Document type (datasheet, requirements)
-- Whether the document uses a manifest file
+Outputs document folder names, one per line. Outputs nothing if no documents are found. Designed for use in CI pipelines.
 
 ### `fdoc build`
 

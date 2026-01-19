@@ -58,8 +58,8 @@ def _detect_document_type(tex_file: Path) -> Optional[str]:
 def list_cmd():
     """List all documents in the current repository.
 
-    Searches the repository for document folders and displays their names,
-    types, and whether they use a manifest file.
+    Outputs document folder names, one per line. Outputs nothing if no
+    documents are found. Designed for use in CI pipelines.
 
     Example:
 
@@ -74,26 +74,5 @@ def list_cmd():
 
     documents = find_documents(repo_root)
 
-    if not documents:
-        click.echo("No documents found in this repository.")
-        click.echo()
-        click.echo("Create a new document with:")
-        click.echo("  fdoc create datasheet --title \"My Document\"")
-        return
-
-    click.echo(f"Found {len(documents)} document(s) in {repo_root.name}/")
-    click.echo()
-
-    # Calculate column widths
-    name_width = max(len(d["name"]) for d in documents)
-    name_width = max(name_width, 4)  # Minimum width for "NAME"
-
-    # Header
-    click.echo(f"  {'NAME':<{name_width}}  {'TYPE':<12}  MANIFEST")
-    click.echo(f"  {'-' * name_width}  {'-' * 12}  --------")
-
-    # Document rows
     for doc in documents:
-        doc_type = doc["type"] or "unknown"
-        manifest = "yes" if doc["has_manifest"] else "no"
-        click.echo(f"  {doc['name']:<{name_width}}  {doc_type:<12}  {manifest}")
+        click.echo(doc["name"])
