@@ -172,7 +172,7 @@ def create(
 
     # Generate default document ID if not provided
     if document_id is None:
-        document_id = "FD/DC/LTX/#####"
+        document_id = "FD/DC/LTX/?????"
 
     # Determine folder name
     if folder_name is None:
