@@ -119,6 +119,10 @@ jobs:
             arial
             arfonts
             uarial
+            chemformula
+            mhchem
+            biber
+            biblatex
           cache: true
 
       - name: Install Arial font
