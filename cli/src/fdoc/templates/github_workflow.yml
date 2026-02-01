@@ -120,6 +120,7 @@ jobs:
             arfonts
             uarial
             chemformula
+            xfrac
             mhchem
             biber
             biblatex
