@@ -27,3 +27,6 @@ output/
 *.swp
 *~
 .DS_Store
+
+# Build ID file (created by CI)
+.buildid

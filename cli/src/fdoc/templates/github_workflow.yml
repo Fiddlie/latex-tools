@@ -141,6 +141,12 @@ jobs:
         run: |
           echo 'do { my $rc = "../.latexmkrc"; require $rc if -f $rc; };' > ~/.latexmkrc
 
+      - name: Set build ID
+        run: |
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          echo "$COMMIT_HASH" > "${{ matrix.document }}/.buildid"
+          echo "Build ID set to: $COMMIT_HASH"
+
       - name: Build document
         run: fdoc build "${{ matrix.document }}"
 
