@@ -30,3 +30,6 @@ output/
 
 # Build ID file (created by CI)
 .buildid
+
+# Local-only reference documents
+reference/
