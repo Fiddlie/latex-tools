@@ -86,7 +86,7 @@ def init(folder_name: str, submodule_url: str, no_commit: bool):
         click.echo("  Created README.md")
 
         _write_claude_guide(folder_path)
-        click.echo("  Created CLAUDE.md and reference guides")
+        click.echo("  Created CLAUDE.md")
 
         # Create initial commit
         if not no_commit:
@@ -167,24 +167,16 @@ def _write_readme(folder_path: Path, project_name: str):
 
 
 def _write_claude_guide(folder_path: Path):
-    """Write the CLAUDE.md files with LaTeX formatting guidelines."""
+    """Write the CLAUDE.md file with LaTeX formatting guidelines.
+
+    Reference guides (CLAUDE_DATASHEET.md, CLAUDE_REQUIREMENTS.md, CLAUDE_MANIFEST.md)
+    live in latex-tools/docs/ and are not copied to the repository.
+    """
     from jinja2 import Template
     update_date = datetime.now().strftime("%Y-%m-%d")
 
-    # Main CLAUDE.md
+    # Main CLAUDE.md (reference guides live in latex-tools/docs/)
     template_content = get_template("claude_guide.md")
     template = Template(template_content)
     content = template.render(update_date=update_date)
     (folder_path / "CLAUDE.md").write_text(content)
-
-    # CLAUDE_DATASHEET.md
-    datasheet_content = get_template("claude_guide_datasheet.md")
-    (folder_path / "CLAUDE_DATASHEET.md").write_text(datasheet_content)
-
-    # CLAUDE_REQUIREMENTS.md
-    requirements_content = get_template("claude_guide_requirements.md")
-    (folder_path / "CLAUDE_REQUIREMENTS.md").write_text(requirements_content)
-
-    # CLAUDE_MANIFEST.md
-    manifest_content = get_template("claude_guide_manifest.md")
-    (folder_path / "CLAUDE_MANIFEST.md").write_text(manifest_content)

@@ -13,21 +13,21 @@ This repository contains Fiddlie documentation written in LaTeX. When working wi
 This repository supports two document types:
 
 - **Datasheet** - Product datasheets with specifications and technical details
-  - 📖 See [CLAUDE_DATASHEET.md](CLAUDE_DATASHEET.md) for complete guidelines
+  - 📖 See [latex-tools/docs/CLAUDE_DATASHEET.md](latex-tools/docs/CLAUDE_DATASHEET.md) for complete guidelines
 
 - **Requirements** - Requirements specifications with ID tracking and priority levels
-  - 📖 See [CLAUDE_REQUIREMENTS.md](CLAUDE_REQUIREMENTS.md) for complete guidelines
+  - 📖 See [latex-tools/docs/CLAUDE_REQUIREMENTS.md](latex-tools/docs/CLAUDE_REQUIREMENTS.md) for complete guidelines
 
 ### Common Resources
 
 - **Manifest Files** - Document metadata in YAML format
-  - 📖 See [CLAUDE_MANIFEST.md](CLAUDE_MANIFEST.md) for format specification
+  - 📖 See [latex-tools/docs/CLAUDE_MANIFEST.md](latex-tools/docs/CLAUDE_MANIFEST.md) for format specification
 
 ### When to Reference Which Guide
 
-- Working on a datasheet? → Read [CLAUDE_DATASHEET.md](CLAUDE_DATASHEET.md)
-- Working on requirements? → Read [CLAUDE_REQUIREMENTS.md](CLAUDE_REQUIREMENTS.md)
-- Need manifest format? → Read [CLAUDE_MANIFEST.md](CLAUDE_MANIFEST.md)
+- Working on a datasheet? → Read [latex-tools/docs/CLAUDE_DATASHEET.md](latex-tools/docs/CLAUDE_DATASHEET.md)
+- Working on requirements? → Read [latex-tools/docs/CLAUDE_REQUIREMENTS.md](latex-tools/docs/CLAUDE_REQUIREMENTS.md)
+- Need manifest format? → Read [latex-tools/docs/CLAUDE_MANIFEST.md](latex-tools/docs/CLAUDE_MANIFEST.md)
 - General LaTeX help? → Continue reading below
 
 ## Common Elements

@@ -81,7 +81,7 @@ def update(ref: str):
             click.echo(f"  Now at: {commit_info}")
         click.echo()
         click.echo("Don't forget to commit the changes:")
-        click.echo("  git add latex-tools .github/workflows/build.yml CLAUDE*.md")
+        click.echo("  git add latex-tools .github/workflows/build.yml CLAUDE.md")
         click.echo('  git commit -m "Update latex-tools"')
 
     except subprocess.CalledProcessError as e:
@@ -129,7 +129,11 @@ def _sync_github_workflow(repo_root: Path):
 
 
 def _sync_claude_guide(repo_root: Path):
-    """Sync the CLAUDE.md files while preserving custom content in main file."""
+    """Sync the CLAUDE.md file while preserving custom content.
+
+    Reference guides (CLAUDE_DATASHEET.md, CLAUDE_REQUIREMENTS.md, CLAUDE_MANIFEST.md)
+    live in latex-tools/docs/ and are updated when the submodule is updated.
+    """
     from jinja2 import Template
 
     # Sync main CLAUDE.md with custom content preservation
@@ -190,13 +194,3 @@ def _sync_claude_guide(repo_root: Path):
 
     # Write the main CLAUDE.md file
     claude_md_path.write_text(new_content)
-
-    # Sync reference guides (these are always overwritten)
-    datasheet_content = get_template("claude_guide_datasheet.md")
-    (repo_root / "CLAUDE_DATASHEET.md").write_text(datasheet_content)
-
-    requirements_content = get_template("claude_guide_requirements.md")
-    (repo_root / "CLAUDE_REQUIREMENTS.md").write_text(requirements_content)
-
-    manifest_content = get_template("claude_guide_manifest.md")
-    (repo_root / "CLAUDE_MANIFEST.md").write_text(manifest_content)
