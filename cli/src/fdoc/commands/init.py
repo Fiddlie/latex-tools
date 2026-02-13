@@ -2,6 +2,7 @@
 
 import re
 import subprocess
+from datetime import datetime
 from pathlib import Path
 
 import click
@@ -84,6 +85,9 @@ def init(folder_name: str, submodule_url: str, no_commit: bool):
         _write_readme(folder_path, folder_name)
         click.echo("  Created README.md")
 
+        _write_claude_guide(folder_path)
+        click.echo("  Created CLAUDE.md and reference guides")
+
         # Create initial commit
         if not no_commit:
             _run_git(["add", "."], cwd=folder_path)
@@ -160,3 +164,27 @@ def _write_readme(folder_path: Path, project_name: str):
     template = Template(template_content)
     content = template.render(project_name=project_name)
     (folder_path / "README.md").write_text(content)
+
+
+def _write_claude_guide(folder_path: Path):
+    """Write the CLAUDE.md files with LaTeX formatting guidelines."""
+    from jinja2 import Template
+    update_date = datetime.now().strftime("%Y-%m-%d")
+
+    # Main CLAUDE.md
+    template_content = get_template("claude_guide.md")
+    template = Template(template_content)
+    content = template.render(update_date=update_date)
+    (folder_path / "CLAUDE.md").write_text(content)
+
+    # CLAUDE_DATASHEET.md
+    datasheet_content = get_template("claude_guide_datasheet.md")
+    (folder_path / "CLAUDE_DATASHEET.md").write_text(datasheet_content)
+
+    # CLAUDE_REQUIREMENTS.md
+    requirements_content = get_template("claude_guide_requirements.md")
+    (folder_path / "CLAUDE_REQUIREMENTS.md").write_text(requirements_content)
+
+    # CLAUDE_MANIFEST.md
+    manifest_content = get_template("claude_guide_manifest.md")
+    (folder_path / "CLAUDE_MANIFEST.md").write_text(manifest_content)
