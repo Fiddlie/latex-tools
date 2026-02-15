@@ -126,6 +126,7 @@ jobs:
             mhchem
             biber
             biblatex
+            truncate
           cache: true
 
       - name: Install Arial font

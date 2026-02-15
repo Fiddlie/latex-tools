@@ -109,13 +109,13 @@
 \newread\buildidreader
 \openin\buildidreader=.buildid
 \ifeof\buildidreader
-  % File doesn't exist - keep default
+% File doesn't exist - keep default
 \else
-  % File exists - read the first line as the build ID
-  \read\buildidreader to \@tempbuildid
-  \ifx\@tempbuildid\empty\else
-    \global\let\@buildid\@tempbuildid
-  \fi
+% File exists - read the first line as the build ID
+\read\buildidreader to \@tempbuildid
+\ifx\@tempbuildid\empty\else
+\global\let\@buildid\@tempbuildid
+\fi
 \fi
 \closein\buildidreader
 
@@ -126,6 +126,7 @@
 % Header and footer setup
 \RequirePackage{fancyhdr}
 \RequirePackage{lastpage}
+\RequirePackage{truncate}  % For header text truncation
 
 % First page has footer but no header
 \fancypagestyle{firstpage}{
@@ -141,7 +142,7 @@
 \fancypagestyle{normalpage}{
   \renewcommand{\headrulewidth}{1pt}
   \renewcommand{\footrulewidth}{1pt}
-  \fancyhead[L]{\leftmark}
+  \fancyhead[L]{\truncate{7cm}{\leftmark}}
   \fancyhead[C]{\slshape\@shorttitle}
   \fancyhead[R]{\companylogo}
   \fancyfoot[L]{\@revision\\{\tiny\@buildid}}
