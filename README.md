@@ -73,6 +73,12 @@ latex-tools/
 └── cli/              # fdoc CLI tool
 ```
 
+## Claude Code Support
+
+Repositories created with `fdoc init` include a generated `CLAUDE.md` file that provides Claude Code with instructions on how to use the LaTeX tools, build documents, and follow project conventions. This file is kept up to date automatically when running `fdoc init` or `fdoc update`.
+
+A `reference/` directory is also gitignored in new repositories. This can be used to store reference documents (e.g. PDFs, specs, or notes) that you want Claude Code to be able to read during a session but that should not be committed to the repository.
+
 ## License
 
 MIT

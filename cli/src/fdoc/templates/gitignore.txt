@@ -33,3 +33,4 @@ output/
 
 # Local-only reference documents
 reference/
+references/
