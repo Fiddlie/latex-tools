@@ -5,7 +5,7 @@ A command-line tool for managing Fiddlie documentation repositories and creating
 ## Installation
 
 ```bash
-pip install git+ssh://git@github.com/Fiddlie/latex-tools.git
+pip install "git+ssh://git@github.com/Fiddlie/latex-tools.git#subdirectory=cli"
 ```
 
 Or for isolated installation:
@@ -143,6 +143,55 @@ The `DOCNAME` argument can be:
 - A full document folder name (e.g., `my-datasheet`)
 - A partial name if unambiguous (e.g., `datasheet` if only one matches)
 - `.` to use the document in the current directory
+
+### `fdoc rev lock`
+
+Lock a document revision for release. Sets draft to false, commits the change, and creates a git tag.
+
+```bash
+fdoc rev lock my-datasheet          # Lock current revision
+fdoc rev lock my-datasheet -p       # Lock and push
+fdoc rev lock my-datasheet -p -n    # Lock, push, and advance to next revision
+```
+
+This command will:
+
+1. Verify the working tree is clean (error if uncommitted changes exist)
+2. Set `revision.draft` to `false` in the manifest
+3. Commit the manifest change
+4. Create a git tag `{docname}-{revision}` (e.g., `my-datasheet-A`)
+
+Options:
+
+- `-p, --push` - Push commit and tags after locking (`git push --follow-tags`)
+- `-n, --next` - Advance to the next revision after locking (and after pushing if `-p`)
+
+### `fdoc rev next`
+
+Advance a document to its next revision. Modifies the manifest only — does not commit.
+
+```bash
+fdoc rev next my-datasheet
+fdoc rev next .
+```
+
+This command will:
+
+1. Increment the revision number intelligently:
+   - Single letter: `A` → `B`, `B` → `C`
+   - Ends in number: `A-rc1` → `A-rc2`, `B-rc10` → `B-rc11`
+2. Set `revision.draft` to `true`
+3. Add a new entry to the revision history with the current author, date, and a placeholder changes field
+
+### `fdoc push`
+
+Push commits and revision tags to the remote.
+
+```bash
+fdoc push
+```
+
+Runs `git push --follow-tags` to push commits along with any revision tags.
 
 ## Examples
 

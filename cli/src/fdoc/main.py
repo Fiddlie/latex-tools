@@ -9,6 +9,8 @@ from fdoc.commands.list import list_cmd
 from fdoc.commands.build import build
 from fdoc.commands.update import update
 from fdoc.commands.name import name
+from fdoc.commands.rev import rev
+from fdoc.commands.push import push
 
 
 @click.group()
@@ -28,6 +30,8 @@ cli.add_command(list_cmd, name="list")
 cli.add_command(build)
 cli.add_command(update)
 cli.add_command(name)
+cli.add_command(rev)
+cli.add_command(push)
 
 
 if __name__ == "__main__":
