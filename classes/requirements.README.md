@@ -11,7 +11,7 @@ Requirements specification documents for Fiddlie projects.
 \shorttitle{Requirements}
 \author{Author Name}
 \date{January 2026}
-\documentId{FD/REQ/PRJ/001}
+\documentId{FD/DC/LTX/10001}
 \revision{A-rc1}
 \draft  % Optional: adds draft watermark
 
@@ -72,7 +72,7 @@ Requirements specification documents for Fiddlie projects.
 - `\shorttitle{}` - Abbreviated title for headers
 - `\author{}` - Document author
 - `\date{}` - Document date
-- `\documentId{}` - Document ID (e.g., FD/REQ/PRJ/001)
+- `\documentId{}` - Document ID (e.g., FD/DC/LTX/10001)
 - `\revision{}` - Revision string (e.g., A-rc1, B)
 - `\draft` - Add draft watermark
 - `\setlogo{filename}` - Override the default logo (use in preamble)
@@ -199,13 +199,13 @@ Optional arguments set the column widths (defaults: 3cm term, 12cm definition):
 
 The `\makedocumentconventions` command documents these standard prefixes:
 
-| Prefix | Category |
-|--------|----------|
-| BR | Business Requirement |
-| CR | Customer Requirement |
-| TR | Technical Requirement |
-| ER | Environmental Requirement |
-| SR | Safety Requirement |
+| Prefix | Category                  |
+| ------ | ------------------------- |
+| BR     | Business Requirement      |
+| CR     | Customer Requirement      |
+| TR     | Technical Requirement     |
+| ER     | Environmental Requirement |
+| SR     | Safety Requirement        |
 
 ## Available Colors
 

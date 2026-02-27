@@ -84,7 +84,7 @@ Use the `fdoc` CLI to create a new datasheet:
 
 ```bash
 # With full options
-fdoc create datasheet --title "Power Supply Unit" --id "FD/DC/PSU/001"
+fdoc create datasheet --title "Power Supply Unit" --id "FD/DC/LTX/10001"
 
 # Quick start with defaults
 fdoc create datasheet

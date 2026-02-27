@@ -17,14 +17,14 @@ The easiest way to get started is with the [`fdoc` CLI tool](cli/README.md):
 
 ```bash
 # Install the CLI
-pip install git+ssh://git@github.com/Fiddlie/latex-tools.git
+pip install "git+ssh://git@github.com/Fiddlie/latex-tools.git#subdirectory=cli"
 
 # Create a new documentation repository
 fdoc init my-docs
 cd my-docs
 
 # Create a new document
-fdoc create datasheet --title "My Product" --id "FD/DC/001"
+fdoc create datasheet --title "My Product" --id "FD/DC/LTX/10001"
 ```
 
 ### Manual Setup
@@ -54,6 +54,32 @@ fdoc create datasheet --title "My Product" --id "FD/DC/001"
    \documentclass{datasheet}
    % ... your content
    ```
+
+### latexmk Parent Directory Support
+
+By default, `latexmk` only loads `.latexmkrc` files from the current directory or your home directory. Since documents live in subdirectories (e.g. `my-datasheet/`), you need to configure `latexmk` to search parent directories for the project-level `.latexmkrc`.
+
+Add the following to your `~/.latexmkrc`:
+
+```perl
+# Search parent directories for project-level .latexmkrc
+use File::Spec;
+use Cwd 'abs_path';
+
+my $dir = Cwd::cwd();
+my $home_rc = abs_path($ENV{HOME} . "/.latexmkrc");
+
+while ($dir ne '/') {
+    my $rc = "$dir/.latexmkrc";
+    if (-f $rc && abs_path($rc) ne $home_rc) {
+        do $rc;
+        last;
+    }
+    $dir = abs_path(File::Spec->catdir($dir, '..'));
+}
+```
+
+This walks up from the current directory until it finds a `.latexmkrc` (that isn't the home directory one) and loads it. This ensures that running `latexmk` from within a document subdirectory picks up the project root configuration.
 
 ## Requirements
 
