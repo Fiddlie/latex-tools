@@ -128,6 +128,12 @@ def find_repo_root() -> Optional[Path]:
     default=None,
     help="Custom folder name (defaults to sanitized title)",
 )
+@click.option(
+    "--sync",
+    "do_sync",
+    is_flag=True,
+    help="Sync with AppSheet document tracker (or set sync: true in .fdocrc)",
+)
 def create(
     doctype: str,
     title: Optional[str],
@@ -138,6 +144,7 @@ def create(
     template_name: str,
     output_dir: Optional[Path],
     folder_name: Optional[str],
+    do_sync: bool,
 ):
     """Create a new document in the documentation repository.
 
@@ -169,6 +176,14 @@ def create(
         doc_num = get_next_document_number(output_dir, doctype)
         type_name = DOCUMENT_TYPE_NAMES[doctype]
         title = f"New {type_name} {doc_num}"
+
+    # Sync with AppSheet if enabled and --id not explicitly provided
+    if document_id is None:
+        from fdoc.config import load_config, is_sync_enabled, save_fdocrc
+
+        config = load_config()
+        if is_sync_enabled(do_sync, config):
+            document_id = _create_appsheet_document(title, config, repo_root)
 
     # Generate default document ID if not provided
     if document_id is None:
@@ -249,6 +264,77 @@ def create(
             import shutil
             shutil.rmtree(doc_folder)
         raise click.ClickException(f"Failed to create document: {e}")
+
+
+def _create_appsheet_document(
+    title: str,
+    config: dict,
+    repo_root: Optional[Path],
+) -> str:
+    """Create a document in AppSheet and return the formatted document ID."""
+    from fdoc.appsheet import get_active_projects, create_document
+    from fdoc.config import save_fdocrc
+
+    # Determine project
+    project_id = None
+    project_name = config.get("project")
+
+    if project_name:
+        # Look up project by name
+        projects = get_active_projects(config)
+        project = next((p for p in projects if p.get("Name") == project_name), None)
+        if project is None:
+            raise click.ClickException(
+                f"Project '{project_name}' not found in AppSheet. "
+                "Check .fdocrc or run without --sync."
+            )
+        project_id = project["Row ID"]
+        click.echo(f"  Using project: {project_name}")
+    else:
+        # Prompt user to pick a project
+        projects = get_active_projects(config)
+        if not projects:
+            raise click.ClickException("No active projects found in AppSheet.")
+
+        click.echo("\nAvailable projects:")
+        for i, p in enumerate(projects, 1):
+            click.echo(f"  {i}. {p['Name']}")
+
+        choice = click.prompt(
+            "Select a project",
+            type=click.IntRange(1, len(projects)),
+        )
+        selected = projects[choice - 1]
+        project_id = selected["Row ID"]
+        project_name = selected["Name"]
+        click.echo(f"  Using project: {project_name}")
+
+        # Offer to save project to .fdocrc
+        if repo_root and click.confirm("Save this project to .fdocrc?"):
+            existing_config = {}
+            rc_path = repo_root / ".fdocrc"
+            if rc_path.is_file():
+                import yaml
+                with open(rc_path) as f:
+                    existing_config = yaml.safe_load(f) or {}
+            existing_config["project"] = project_name
+            save_fdocrc(repo_root, existing_config)
+            click.echo("  Saved project to .fdocrc")
+
+    # Create document in AppSheet
+    click.echo("  Creating document in AppSheet...")
+    row = create_document(title, project_id, "A-rc1", config)
+
+    doc_no = row.get("Document No")
+    if doc_no is None:
+        raise click.ClickException(
+            "AppSheet did not return a Document No. "
+            "The document may have been created — check the app."
+        )
+
+    document_id = f"FD/DC/LTX/{int(doc_no):05d}"
+    click.echo(f"  Assigned document ID: {document_id}")
+    return document_id
 
 
 def _render_template(template_path: str, context: dict) -> str:

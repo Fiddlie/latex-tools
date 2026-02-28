@@ -63,6 +63,7 @@ Options:
 - `--template [default|empty]` - Template variant (default: default)
 - `--output-dir, -o PATH` - Output directory (defaults to current directory)
 - `--folder-name, -f TEXT` - Custom folder name (defaults to sanitized title)
+- `--sync` - Sync with AppSheet document tracker (or set `sync: true` in `.fdocrc`)
 
 ### `fdoc list`
 
@@ -165,6 +166,7 @@ Options:
 
 - `-p, --push` - Push commit and tags after locking (`git push --follow-tags`)
 - `-n, --next` - Advance to the next revision after locking (and after pushing if `-p`)
+- `--sync` - Sync revision to AppSheet document tracker (or set `sync: true` in `.fdocrc`)
 
 ### `fdoc rev next`
 
@@ -192,6 +194,50 @@ fdoc push
 ```
 
 Runs `git push --follow-tags` to push commits along with any revision tags.
+
+## AppSheet Integration
+
+fdoc can sync with the Fiddlie AppSheet document tracker to auto-assign document IDs and update revision status.
+
+### Setup
+
+1. Get your AppSheet API key from the app's Settings > Integrations > API
+2. Add it to your `~/.fdocrc`:
+   ```yaml
+   appsheet_api_key: "your-api-key-here"
+   ```
+   Or set the `FDOC_APPSHEET_API_KEY` environment variable.
+
+3. Optionally, enable sync by default and set a project in your repo's `.fdocrc`:
+   ```yaml
+   sync: true
+   project: "My Project Name"
+   ```
+
+### Configuration (`.fdocrc`)
+
+fdoc searches for `.fdocrc` files in order: current directory, parent directories, then `~/.fdocrc`. Settings from nearer files take priority. Environment variables (`FDOC_APPSHEET_API_KEY`, `FDOC_APPSHEET_APP_ID`) override file config.
+
+| Setting | Description |
+|---------|-------------|
+| `sync` | Enable AppSheet sync by default (`true`/`false`) |
+| `project` | Default project name for this repo |
+| `appsheet_api_key` | AppSheet API access key |
+| `appsheet_app_id` | AppSheet app ID (has default) |
+
+### Usage
+
+Use `--sync` on supported commands, or set `sync: true` in `.fdocrc`:
+
+```bash
+# Create a document with auto-assigned ID from AppSheet
+fdoc create datasheet --title "My Widget" --sync
+
+# Lock a revision and update AppSheet
+fdoc rev lock my-widget --sync
+```
+
+When creating a document with sync enabled, fdoc will prompt you to choose a project (if not set in `.fdocrc`) and offer to save it.
 
 ## Examples
 

@@ -135,6 +135,27 @@ def _do_next_revision(repo_root: Path, doc: dict):
     )
 
 
+def _sync_revision_to_appsheet(manifest: dict, revision: str, config: dict):
+    """Update the revision in AppSheet (non-fatal on failure)."""
+    try:
+        doc_id = manifest.get("document", {}).get("id", "")
+        # Extract trailing number from ID like "FD/DC/LTX/00042"
+        match = re.search(r"(\d+)$", doc_id)
+        if not match:
+            click.secho(
+                f"  Warning: Could not extract document number from '{doc_id}', skipping AppSheet sync.",
+                fg="yellow",
+            )
+            return
+
+        doc_no = int(match.group(1))
+        from fdoc.appsheet import update_document_revision
+        update_document_revision(doc_no, revision, config)
+        click.echo("  Updated revision in AppSheet")
+    except Exception as e:
+        click.secho(f"  Warning: Failed to update AppSheet: {e}", fg="yellow")
+
+
 @click.group()
 def rev():
     """Manage document revisions.
@@ -148,7 +169,8 @@ def rev():
 @click.argument("docname")
 @click.option("-p", "--push", "do_push", is_flag=True, help="Push commit and tags after locking")
 @click.option("-n", "--next", "do_next", is_flag=True, help="Advance to next revision after locking")
-def lock(docname: str, do_push: bool, do_next: bool):
+@click.option("--sync", "do_sync", is_flag=True, help="Sync revision to AppSheet document tracker")
+def lock(docname: str, do_push: bool, do_next: bool, do_sync: bool):
     """Lock a document revision for release.
 
     Sets draft to false, commits the change, and creates a git tag.
@@ -228,6 +250,12 @@ def lock(docname: str, do_push: bool, do_next: bool):
     click.echo(f"  Created tag: {tag_name}")
 
     click.secho(f"\nRevision {revision} locked for {doc['name']}", fg="green", bold=True)
+
+    # Sync to AppSheet if enabled
+    from fdoc.config import load_config, is_sync_enabled
+    config = load_config()
+    if is_sync_enabled(do_sync, config):
+        _sync_revision_to_appsheet(manifest, revision, config)
 
     # Push if requested
     if do_push:
