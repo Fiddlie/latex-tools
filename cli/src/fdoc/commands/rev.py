@@ -169,7 +169,7 @@ def rev():
 @click.argument("docname")
 @click.option("-p", "--push", "do_push", is_flag=True, help="Push commit and tags after locking")
 @click.option("-n", "--next", "do_next", is_flag=True, help="Advance to next revision after locking")
-@click.option("--sync", "do_sync", is_flag=True, help="Sync revision to AppSheet document tracker")
+@click.option("--sync/--no-sync", "do_sync", default=None, help="Sync with AppSheet document tracker (default: from .fdocrc)")
 def lock(docname: str, do_push: bool, do_next: bool, do_sync: bool):
     """Lock a document revision for release.
 

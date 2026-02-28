@@ -129,10 +129,10 @@ def find_repo_root() -> Optional[Path]:
     help="Custom folder name (defaults to sanitized title)",
 )
 @click.option(
-    "--sync",
+    "--sync/--no-sync",
     "do_sync",
-    is_flag=True,
-    help="Sync with AppSheet document tracker (or set sync: true in .fdocrc)",
+    default=None,
+    help="Sync with AppSheet document tracker (default: from .fdocrc)",
 )
 def create(
     doctype: str,

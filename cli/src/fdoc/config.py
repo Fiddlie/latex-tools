@@ -90,10 +90,15 @@ def get_appsheet_app_id(config: Optional[dict] = None) -> str:
     return config.get("appsheet_app_id", DEFAULT_APP_ID)
 
 
-def is_sync_enabled(flag: bool, config: Optional[dict] = None) -> bool:
-    """True if -s flag passed OR sync:true in config."""
-    if flag:
-        return True
+def is_sync_enabled(flag: Optional[bool], config: Optional[dict] = None) -> bool:
+    """Check if sync is enabled.
+
+    flag=True (--sync): always sync.
+    flag=False (--no-sync): never sync.
+    flag=None (neither): fall back to sync setting in config.
+    """
+    if flag is not None:
+        return flag
     if config is None:
         config = load_config()
     return config.get("sync", False) is True

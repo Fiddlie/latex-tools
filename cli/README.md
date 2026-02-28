@@ -63,7 +63,7 @@ Options:
 - `--template [default|empty]` - Template variant (default: default)
 - `--output-dir, -o PATH` - Output directory (defaults to current directory)
 - `--folder-name, -f TEXT` - Custom folder name (defaults to sanitized title)
-- `--sync` - Sync with AppSheet document tracker (or set `sync: true` in `.fdocrc`)
+- `--sync / --no-sync` - Enable or disable AppSheet sync (default: from `.fdocrc`)
 
 ### `fdoc list`
 
@@ -166,7 +166,7 @@ Options:
 
 - `-p, --push` - Push commit and tags after locking (`git push --follow-tags`)
 - `-n, --next` - Advance to the next revision after locking (and after pushing if `-p`)
-- `--sync` - Sync revision to AppSheet document tracker (or set `sync: true` in `.fdocrc`)
+- `--sync / --no-sync` - Enable or disable AppSheet sync (default: from `.fdocrc`)
 
 ### `fdoc rev next`
 
