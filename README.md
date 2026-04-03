@@ -24,7 +24,7 @@ fdoc init my-docs
 cd my-docs
 
 # Create a new document
-fdoc create datasheet --title "My Product" --id "FD/DC/LTX/10001"
+fdoc create datasheet --title "My Product" --id "FD-DC-LTX-10001"
 ```
 
 ### Manual Setup

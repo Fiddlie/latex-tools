@@ -28,7 +28,7 @@ Or use the LaTeX Workshop extension in VSCode for automatic builds on save.
 Use the `fdoc` CLI tool:
 
 ```bash
-fdoc create datasheet --title "Document Title" --id "FD/DOC/001"
+fdoc create datasheet --title "Document Title" --id "FD-DC-LTX-00001"
 ```
 
 ## Requirements

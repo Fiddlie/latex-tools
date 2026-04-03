@@ -139,7 +139,7 @@ def _sync_revision_to_appsheet(manifest: dict, revision: str, config: dict):
     """Update the revision in AppSheet (non-fatal on failure)."""
     try:
         doc_id = manifest.get("document", {}).get("id", "")
-        # Extract trailing number from ID like "FD/DC/LTX/00042"
+        # Extract trailing number from ID like "FD-DC-LTX-00042"
         match = re.search(r"(\d+)$", doc_id)
         if not match:
             click.secho(

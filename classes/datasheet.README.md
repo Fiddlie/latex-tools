@@ -11,7 +11,7 @@ Professional product data sheets for Fiddlie products.
 \shorttitle{Short Name}
 \author{Author Name}
 \date{January 2026}
-\documentId{FD/DC/LTX/12345}
+\documentId{FD-DC-LTX-12345}
 \revision{A-rc1}
 \draft  % Optional: adds draft watermark
 
@@ -64,7 +64,7 @@ Professional product data sheets for Fiddlie products.
 - `\shorttitle{}` - Abbreviated title for headers
 - `\author{}` - Document author
 - `\date{}` - Document date
-- `\documentId{}` - Document ID (e.g., FD/DC/LTX/12345)
+- `\documentId{}` - Document ID (e.g., FD-DC-LTX-12345)
 - `\revision{}` - Revision string (e.g., A-rc1, B)
 - `\draft` - Add draft watermark
 - `\setlogo{filename}` - Override the default logo (use in preamble)
@@ -84,7 +84,7 @@ Use the `fdoc` CLI to create a new datasheet:
 
 ```bash
 # With full options
-fdoc create datasheet --title "Power Supply Unit" --id "FD/DC/LTX/10001"
+fdoc create datasheet --title "Power Supply Unit" --id "FD-DC-LTX-10001"
 
 # Quick start with defaults
 fdoc create datasheet

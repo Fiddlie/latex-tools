@@ -102,7 +102,7 @@ def init(folder_name: str, submodule_url: str, no_commit: bool):
         click.echo()
         click.echo("Next steps:")
         click.echo(f"  cd {folder_name}")
-        click.echo("  fdoc create datasheet --title \"My Document\" --id \"FD/DC/LTX/00001\"")
+        click.echo("  fdoc create datasheet --title \"My Document\" --id \"FD-DC-LTX-00001\"")
 
     except subprocess.CalledProcessError as e:
         # Clean up on failure

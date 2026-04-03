@@ -102,7 +102,7 @@ def find_repo_root() -> Optional[Path]:
 @click.option(
     "--id", "document_id",
     default=None,
-    help="Document ID (defaults to FD/DC/LTX/?????)",
+    help="Document ID (defaults to FD-DC-LTX-?????)",
 )
 @click.option(
     "--no-manifest",
@@ -152,9 +152,9 @@ def create(
 
     Examples:
 
-        fdoc create datasheet --title "Power Supply Unit" --id "FD/DC/LTX/00001"
+        fdoc create datasheet --title "Power Supply Unit" --id "FD-DC-LTX-00001"
 
-        fdoc create requirements --title "Project Requirements" --id "FD/DC/LTX/00001" --no-manifest
+        fdoc create requirements --title "Project Requirements" --id "FD-DC-LTX-00001" --no-manifest
 
         fdoc create datasheet  # Creates "New Datasheet 1" with default ID
     """
@@ -187,7 +187,7 @@ def create(
 
     # Generate default document ID if not provided
     if document_id is None:
-        document_id = "FD/DC/LTX/?????"
+        document_id = "FD-DC-LTX-?????"
 
     # Determine folder name
     if folder_name is None:
@@ -332,7 +332,7 @@ def _create_appsheet_document(
             "The document may have been created — check the app."
         )
 
-    document_id = f"FD/DC/LTX/{int(doc_no):05d}"
+    document_id = f"FD-DC-LTX-{int(doc_no):05d}"
     click.echo(f"  Assigned document ID: {document_id}")
     return document_id
 

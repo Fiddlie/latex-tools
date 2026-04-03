@@ -44,8 +44,8 @@ Options:
 Create a new document in the current repository.
 
 ```bash
-fdoc create datasheet --title "Power Supply Unit" --id "FD/DC/PSU/001"
-fdoc create requirements --title "Project Requirements" --id "FD/REQ/001"
+fdoc create datasheet --title "Power Supply Unit" --id "FD-DC-LTX-00001"
+fdoc create requirements --title "Project Requirements" --id "FD-DC-LTX-00002"
 ```
 
 Document types:
@@ -58,7 +58,7 @@ Options:
 - `--title, -t TEXT` - Full document title (defaults to "New {Type} N")
 - `--shorttitle, -s TEXT` - Short title for headers (defaults to title)
 - `--author, -a TEXT` - Document author (defaults to git user.name)
-- `--id TEXT` - Document ID (defaults to FD/DC/LTX/#####)
+- `--id TEXT` - Document ID (defaults to FD-DC-LTX-#####)
 - `--no-manifest` - Use manual metadata instead of manifest.yaml
 - `--template [default|empty]` - Template variant (default: default)
 - `--output-dir, -o PATH` - Output directory (defaults to current directory)
@@ -131,8 +131,8 @@ The generated name format depends on whether the document is a draft:
 
 Examples:
 
-- `FD/DC/LTX/10010-A - Datasheet Doc` (non-draft)
-- `FD/DC/LTX/10010-B-rc2-1a2b3c - My Document` (draft)
+- `FD-DC-LTX-10010-A - Datasheet Doc` (non-draft)
+- `FD-DC-LTX-10010-B-rc2-1a2b3c - My Document` (draft)
 
 Options:
 
@@ -203,9 +203,11 @@ fdoc can sync with the Fiddlie AppSheet document tracker to auto-assign document
 
 1. Get your AppSheet API key from the app's Settings > Integrations > API
 2. Add it to your `~/.fdocrc`:
+
    ```yaml
    appsheet_api_key: "your-api-key-here"
    ```
+
    Or set the `FDOC_APPSHEET_API_KEY` environment variable.
 
 3. Optionally, enable sync by default and set a project in your repo's `.fdocrc`:
@@ -218,12 +220,12 @@ fdoc can sync with the Fiddlie AppSheet document tracker to auto-assign document
 
 fdoc searches for `.fdocrc` files in order: current directory, parent directories, then `~/.fdocrc`. Settings from nearer files take priority. Environment variables (`FDOC_APPSHEET_API_KEY`, `FDOC_APPSHEET_APP_ID`) override file config.
 
-| Setting | Description |
-|---------|-------------|
-| `sync` | Enable AppSheet sync by default (`true`/`false`) |
-| `project` | Default project name for this repo |
-| `appsheet_api_key` | AppSheet API access key |
-| `appsheet_app_id` | AppSheet app ID (has default) |
+| Setting            | Description                                      |
+| ------------------ | ------------------------------------------------ |
+| `sync`             | Enable AppSheet sync by default (`true`/`false`) |
+| `project`          | Default project name for this repo               |
+| `appsheet_api_key` | AppSheet API access key                          |
+| `appsheet_app_id`  | AppSheet app ID (has default)                    |
 
 ### Usage
 
@@ -260,7 +262,7 @@ fdoc create datasheet
 ```bash
 fdoc create datasheet \
   --title "ACME Power Module PM-500" \
-  --id "FD/DC/LTX/00542"
+  --id "FD-DC-LTX-00542"
 ```
 
 ### Create a requirements document without manifest
@@ -268,7 +270,7 @@ fdoc create datasheet \
 ```bash
 fdoc create requirements \
   --title "Project Alpha Requirements" \
-  --id "FD/DC/LTX/01234" \
+  --id "FD-DC-LTX-01234" \
   --no-manifest \
   --template empty
 ```

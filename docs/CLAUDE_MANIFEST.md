@@ -31,7 +31,7 @@ document:
   shorttitle: "Short Title"
   author: "Author Name"
   date: "DD MMM YYYY"
-  id: "FD/SEGMENT/TYPE/NUMBER"
+  id: "FD-SEGMENT-TYPE-NUMBER"
 
 revision:
   current: "A-rc1"
@@ -57,36 +57,39 @@ history:
 ### document section
 
 **title** (required)
+
 - Full document title displayed on the title page
 - Can be long and descriptive
 - Example: `"ABC-123 Power Supply Unit Datasheet"`
 
 **shorttitle** (required)
+
 - Abbreviated title for headers
 - Keep under 30 characters for good formatting
 - Example: `"ABC-123 PSU"`
 
 **author** (required)
+
 - Document author name
 - Can be a person or team
 - Example: `"John Smith"` or `"Hardware Team"`
 
 **date** (required)
+
 - Document date in `DD MMM YYYY` format
 - Example: `"15 Jan 2026"`, `"03 Feb 2026"`
 - Use three-letter month abbreviations: Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
 
 **id** (required)
-- Document identifier in format `FD/SEGMENT/TYPE/NUMBER`
-- Examples:
-  - `"FD/DC/LTX/00001"` - Default format
-  - `"FD/DC/PSU/001"` - Power Supply Unit
-  - `"FD/REQ/PRJ/001"` - Requirements document
+
+- Document identifier in format `FD-SEGMENT-TYPE-NUMBER`
+- Example: `"FD-DC-LTX-00001"` - Default format
 - Should be unique within your organization
 
 ### revision section
 
 **current** (required)
+
 - Current revision identifier
 - Common formats:
   - `"A-rc1"`, `"A-rc2"` - Release candidate versions
@@ -95,6 +98,7 @@ history:
 - Displayed in footer on every page
 
 **draft** (required)
+
 - Boolean: `true` or `false`
 - When `true`: Shows "DRAFT" watermark diagonally across all pages
 - When `false`: No watermark
@@ -104,18 +108,22 @@ history:
 Array of revision entries, each with:
 
 **revision** (required)
+
 - Revision identifier matching the format used in `revision.current`
 - Example: `"A-rc1"`
 
 **date** (required)
+
 - Date of this revision in `DD MMM YYYY` format
 - Example: `"15 Jan 2026"`
 
 **author** (required)
+
 - Who made this revision
 - Example: `"John Smith"`
 
 **changes** (required)
+
 - Brief description of what changed
 - Examples:
   - `"Initial draft"`
@@ -133,7 +141,7 @@ document:
   shorttitle: "XYZ-500 Regulator"
   author: "Hardware Engineering"
   date: "13 Feb 2026"
-  id: "FD/DC/REG/001"
+  id: "FD-DC-LTX-001"
 
 revision:
   current: "A-rc1"
@@ -154,7 +162,7 @@ document:
   shorttitle: "Mobile App Reqs"
   author: "Product Team"
   date: "01 Feb 2026"
-  id: "FD/REQ/APP/001"
+  id: "FD-DC-LTX-00002"
 
 revision:
   current: "B"
@@ -183,7 +191,7 @@ document:
   shorttitle: "ABC-100 Spec"
   author: "Systems Team"
   date: "10 Feb 2026"
-  id: "FD/DC/SYS/100"
+  id: "FD-DC-LTX-100"
 
 revision:
   current: "1.2"
@@ -208,11 +216,11 @@ history:
 
 The `\makerevisionhistory` command in LaTeX automatically generates a table from the `history` section:
 
-| Revision | Date | Author | Changes |
-|----------|------|--------|---------|
-| A-rc1 | 15 Jan 2026 | John Smith | Initial draft |
-| A-rc2 | 20 Jan 2026 | John Smith | Updated specs |
-| B | 01 Feb 2026 | John Smith | First release |
+| Revision | Date        | Author     | Changes       |
+| -------- | ----------- | ---------- | ------------- |
+| A-rc1    | 15 Jan 2026 | John Smith | Initial draft |
+| A-rc2    | 20 Jan 2026 | John Smith | Updated specs |
+| B        | 01 Feb 2026 | John Smith | First release |
 
 Always include `\makerevisionhistory` before `\importantnotice` at the end of your document.
 
@@ -238,7 +246,7 @@ If you don't want to use a manifest, you can specify metadata manually:
 \author{Author Name}
 \date{February 2026}
 \revision{A-rc1}
-\documentId{FD/DC/LTX/00001}
+\documentId{FD-DC-LTX-00001}
 \draft  % Optional: adds draft watermark
 
 \begin{document}
@@ -248,6 +256,7 @@ If you don't want to use a manifest, you can specify metadata manually:
 ```
 
 However, **manifest is recommended** because:
+
 - Metadata is separate from LaTeX code
 - Revision history is automatic
 - Easier to maintain and update
