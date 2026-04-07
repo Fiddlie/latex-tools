@@ -3,7 +3,7 @@ name: Build Documents
 on:
   push:
     branches: [main]
-    tags: ['*']
+    tags: ["*"]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -15,7 +15,7 @@ jobs:
       documents: ${{ steps.list-docs.outputs.documents }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           lfs: true
 
@@ -28,7 +28,7 @@ jobs:
           git submodule update --init --force --depth=1 --recursive
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: "pip"
@@ -54,7 +54,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Checkout submodules
         env:
@@ -65,7 +65,7 @@ jobs:
           git submodule update --init --force --depth=1 --recursive
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: "pip"
@@ -160,7 +160,7 @@ jobs:
           mv "${{ matrix.document }}/${{ matrix.document }}.pdf" "${{ matrix.document }}/${SAFE_NAME}.pdf"
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ matrix.document }}
           path: ${{ matrix.document }}/*.pdf
