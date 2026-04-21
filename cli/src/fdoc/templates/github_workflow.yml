@@ -159,13 +159,15 @@ jobs:
         run: fdoc build "${{ matrix.document }}"
 
       - name: Rename PDF
+        id: rename-pdf
         run: |
           SAFE_NAME=$(fdoc name "${{ matrix.document }}" --safe)
           mv "${{ matrix.document }}/${{ matrix.document }}.pdf" "${{ matrix.document }}/${SAFE_NAME}.pdf"
+          echo "safe-name=${SAFE_NAME}" >> $GITHUB_OUTPUT
 
       - name: Upload artifact
         uses: actions/upload-artifact@v6
         with:
-          name: ${{ matrix.document }}
+          name: ${{ steps.rename-pdf.outputs.safe-name }}
           path: ${{ matrix.document }}/*.pdf
           if-no-files-found: error
