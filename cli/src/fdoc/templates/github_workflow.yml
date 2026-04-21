@@ -55,6 +55,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          lfs: true
 
       - name: Checkout submodules
         env:
@@ -128,6 +130,8 @@ jobs:
             biber
             biblatex
             truncate
+            xltabular
+            ltablex
           cache: true
 
       - name: Install Arial font
