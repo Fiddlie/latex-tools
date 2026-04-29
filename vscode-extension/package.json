@@ -1,0 +1,181 @@
+{
+  "name": "fdoc",
+  "displayName": "fdoc - Fiddlie Documentation",
+  "description": "Create, build, and manage Fiddlie LaTeX documentation repositories from VS Code.",
+  "version": "0.1.0",
+  "publisher": "fiddlie",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "extensionDependencies": [
+    "James-Yu.latex-workshop"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "fdoc.init",
+        "title": "fdoc: Initialize Documentation Repository"
+      },
+      {
+        "command": "fdoc.create",
+        "title": "fdoc: Create Document",
+        "icon": "$(add)"
+      },
+      {
+        "command": "fdoc.build",
+        "title": "fdoc: Build Document",
+        "icon": "$(play)"
+      },
+      {
+        "command": "fdoc.buildClean",
+        "title": "fdoc: Clean and Build Document"
+      },
+      {
+        "command": "fdoc.openPdf",
+        "title": "fdoc: Open Built PDF",
+        "icon": "$(file-pdf)"
+      },
+      {
+        "command": "fdoc.revLock",
+        "title": "fdoc: Lock Revision"
+      },
+      {
+        "command": "fdoc.revNext",
+        "title": "fdoc: Advance to Next Revision"
+      },
+      {
+        "command": "fdoc.push",
+        "title": "fdoc: Push Commits and Tags"
+      },
+      {
+        "command": "fdoc.update",
+        "title": "fdoc: Update latex-tools Submodule"
+      },
+      {
+        "command": "fdoc.commitDocument",
+        "title": "fdoc: Commit Document Changes"
+      },
+      {
+        "command": "fdoc.refresh",
+        "title": "fdoc: Refresh Documents",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "fdoc.syncRevision",
+        "title": "fdoc: Sync Revision with AppSheet"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "fdoc.refresh",
+          "when": "view == fdoc.documents",
+          "group": "navigation"
+        },
+        {
+          "command": "fdoc.create",
+          "when": "view == fdoc.documents",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "fdoc.build",
+          "when": "view == fdoc.documents && viewItem == document",
+          "group": "inline"
+        },
+        {
+          "command": "fdoc.openPdf",
+          "when": "view == fdoc.documents && viewItem == document",
+          "group": "inline"
+        },
+        {
+          "command": "fdoc.buildClean",
+          "when": "view == fdoc.documents && viewItem == document",
+          "group": "build@1"
+        },
+        {
+          "command": "fdoc.revLock",
+          "when": "view == fdoc.documents && viewItem == document",
+          "group": "revision@1"
+        },
+        {
+          "command": "fdoc.revNext",
+          "when": "view == fdoc.documents && viewItem == document",
+          "group": "revision@2"
+        },
+        {
+          "command": "fdoc.syncRevision",
+          "when": "view == fdoc.documents && viewItem == document",
+          "group": "revision@3"
+        },
+        {
+          "command": "fdoc.commitDocument",
+          "when": "view == fdoc.documents && viewItem == document",
+          "group": "git@1"
+        }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "fdoc.documents",
+          "name": "fdoc Documents",
+          "contextualTitle": "fdoc"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "fdoc.documents",
+        "contents": "No fdoc workspace detected.\n[Initialize Repository](command:fdoc.init)\nOr open a folder containing a `latex-tools` submodule."
+      }
+    ],
+    "configuration": {
+      "title": "fdoc",
+      "properties": {
+        "fdoc.cliPath": {
+          "type": "string",
+          "default": "fdoc",
+          "description": "Path to the fdoc executable. Use an absolute path if fdoc is not on your PATH."
+        },
+        "fdoc.python": {
+          "type": "string",
+          "default": "python3",
+          "description": "Python interpreter used for the install hint when fdoc is missing."
+        },
+        "fdoc.confirmPush": {
+          "type": "boolean",
+          "default": true,
+          "description": "Ask for confirmation before pushing to the git remote."
+        },
+        "fdoc.defaultPushOnLock": {
+          "type": "boolean",
+          "default": false,
+          "description": "Pass --push to `fdoc rev lock` by default."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package --out fdoc.vsix"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^2.24.0",
+    "typescript": "^5.3.3"
+  }
+}
