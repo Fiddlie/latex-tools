@@ -9,3 +9,13 @@ export async function listDocuments(cli: FdocCli, root: string): Promise<string[
     .map((l) => l.trim())
     .filter((l) => l.length > 0);
 }
+
+/** Run `fdoc projects list` and return project names. Returns null on error. */
+export async function listProjects(cli: FdocCli, cwd: string): Promise<string[] | null> {
+  const r = await cli.capture({ cwd, args: ["projects", "list"] });
+  if (r.code !== 0) return null;
+  return r.stdout
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l.length > 0);
+}

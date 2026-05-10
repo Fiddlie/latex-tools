@@ -170,7 +170,13 @@ def rev():
 @click.option("-p", "--push", "do_push", is_flag=True, help="Push commit and tags after locking")
 @click.option("-n", "--next", "do_next", is_flag=True, help="Advance to next revision after locking")
 @click.option("--sync/--no-sync", "do_sync", default=None, help="Sync with AppSheet document tracker (default: from .fdocrc)")
-def lock(docname: str, do_push: bool, do_next: bool, do_sync: bool):
+@click.option(
+    "--project",
+    "project_override",
+    default=None,
+    help="AppSheet project name. Accepted for API symmetry; rev lock identifies docs by ID.",
+)
+def lock(docname: str, do_push: bool, do_next: bool, do_sync: bool, project_override: str):
     """Lock a document revision for release.
 
     Sets draft to false, commits the change, and creates a git tag.

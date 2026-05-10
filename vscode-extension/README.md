@@ -33,13 +33,13 @@ A friendly UI for the `fdoc` CLI. Lets team members create, build, and ship Fidd
 
 ## AppSheet sync
 
-The extension passes `--no-sync` for `create` and `rev lock` to avoid the CLI's interactive project picker. To use AppSheet:
+When you run **fdoc: Create Document**, choose **Auto-assign from AppSheet** for the ID. The extension calls `fdoc projects list`, shows a QuickPick, and passes `--project` to `fdoc create --sync`. You only need:
 
-1. Set `appsheet_api_key` in `~/.fdocrc`.
-2. Set `project: "Your Project"` and `sync: true` in the repo's `.fdocrc`.
-3. Use **fdoc: Sync Revision with AppSheet** to push revision state to the tracker.
+1. `appsheet_api_key` set in `~/.fdocrc` (or via the `FDOC_APPSHEET_API_KEY` env var).
 
-(A future version may move the project picker into VS Code's QuickPick.)
+A `project: "..."` entry in the repo's `.fdocrc` is no longer required — though it still works as a default.
+
+For revisions, **fdoc: Sync Revision with AppSheet** runs `fdoc rev lock --sync`, which identifies the document by its existing ID, so no project lookup is needed.
 
 ## Develop
 
@@ -61,6 +61,5 @@ Install with: `code --install-extension fdoc.vsix`.
 
 ## Limitations / known gaps
 
-- Interactive AppSheet project selection isn't wired through VS Code yet — relies on `.fdocrc`.
 - The "advance revision" command modifies the manifest only; commit it via **fdoc: Commit Document Changes**.
 - Build-on-save uses LaTeX Workshop's recipe rather than `fdoc build`; the recipe is configured by `fdoc init`.

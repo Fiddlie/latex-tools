@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { FdocCli } from "../cli";
+import { listProjects } from "../documents";
 import { activeWorkspaceFolder, findRepoRoot, pickWorkspaceFolder } from "../workspace";
 
 const DOC_TYPES = [
@@ -34,15 +35,36 @@ export async function createDocument(cli: FdocCli, refresh: () => void): Promise
   });
   if (title === undefined) return;
 
-  const documentId = await vscode.window.showInputBox({
-    prompt: "Document ID (leave blank to auto-assign)",
-    placeHolder: "FD-DC-LTX-00001",
-    validateInput: (v) =>
-      !v || /^FD-DC-LTX-\d{5}$/.test(v.trim())
-        ? undefined
-        : "Format: FD-DC-LTX-##### (or leave blank).",
-  });
-  if (documentId === undefined) return;
+  const idChoice = await vscode.window.showQuickPick(
+    [
+      {
+        label: "Auto-assign from AppSheet",
+        value: "sync",
+        description: "Pick a project; fdoc will reserve a Document No",
+      },
+      { label: "Enter ID manually", value: "manual", description: "FD-DC-LTX-#####" },
+      { label: "Skip (use placeholder)", value: "skip", description: "FD-DC-LTX-?????" },
+    ],
+    { placeHolder: "How should the document ID be assigned?" },
+  );
+  if (!idChoice) return;
+
+  let documentId: string | undefined;
+  let projectName: string | undefined;
+
+  if (idChoice.value === "manual") {
+    const entered = await vscode.window.showInputBox({
+      prompt: "Document ID",
+      placeHolder: "FD-DC-LTX-00001",
+      validateInput: (v) =>
+        /^FD-DC-LTX-\d{5}$/.test(v.trim()) ? undefined : "Format: FD-DC-LTX-#####.",
+    });
+    if (entered === undefined) return;
+    documentId = entered.trim();
+  } else if (idChoice.value === "sync") {
+    projectName = await pickProject(cli, root);
+    if (!projectName) return;
+  }
 
   const template = await vscode.window.showQuickPick(TEMPLATES, {
     placeHolder: "Template variant",
@@ -60,10 +82,14 @@ export async function createDocument(cli: FdocCli, refresh: () => void): Promise
 
   const args = ["create", doctype.label, "--template", template.label];
   if (title.trim()) args.push("--title", title.trim());
-  if (documentId.trim()) args.push("--id", documentId.trim());
+  if (documentId) args.push("--id", documentId);
   if (!useManifest.value) args.push("--no-manifest");
-  // Avoid the CLI's interactive AppSheet project picker — let users opt in via .fdocrc.
-  args.push("--no-sync");
+
+  if (projectName) {
+    args.push("--sync", "--project", projectName);
+  } else {
+    args.push("--no-sync");
+  }
 
   const result = await cli.run({
     cwd: root,
@@ -85,6 +111,40 @@ export async function createDocument(cli: FdocCli, refresh: () => void): Promise
   } else {
     vscode.window.showErrorMessage(`fdoc create failed (exit ${result.code}).`);
   }
+}
+
+async function pickProject(cli: FdocCli, root: string): Promise<string | undefined> {
+  const projects = await vscode.window.withProgress(
+    { location: vscode.ProgressLocation.Notification, title: "Loading AppSheet projects…" },
+    () => listProjects(cli, root),
+  );
+
+  if (projects === null) {
+    const choice = await vscode.window.showErrorMessage(
+      "Couldn't load AppSheet projects. Check ~/.fdocrc has appsheet_api_key set.",
+      "Open settings",
+      "Type project name",
+    );
+    if (choice === "Open settings") {
+      await vscode.commands.executeCommand("workbench.action.openSettings", "fdoc");
+    } else if (choice === "Type project name") {
+      return await vscode.window.showInputBox({
+        prompt: "Project name (must match AppSheet exactly)",
+        ignoreFocusOut: true,
+      });
+    }
+    return undefined;
+  }
+
+  if (projects.length === 0) {
+    vscode.window.showWarningMessage("AppSheet returned no active projects.");
+    return undefined;
+  }
+
+  return await vscode.window.showQuickPick(projects, {
+    placeHolder: "Select an AppSheet project",
+    ignoreFocusOut: true,
+  });
 }
 
 function parseCreatedFolder(stdout: string): string | undefined {

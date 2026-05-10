@@ -11,6 +11,7 @@ from fdoc.commands.update import update
 from fdoc.commands.name import name
 from fdoc.commands.rev import rev
 from fdoc.commands.push import push
+from fdoc.commands.projects import projects
 
 
 @click.group()
@@ -32,6 +33,7 @@ cli.add_command(update)
 cli.add_command(name)
 cli.add_command(rev)
 cli.add_command(push)
+cli.add_command(projects)
 
 
 if __name__ == "__main__":
