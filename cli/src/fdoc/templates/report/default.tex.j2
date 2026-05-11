@@ -1,0 +1,33 @@
+\documentclass[]{techreport}
+
+% Load manifest support and apply values from YAML file
+\usepackage{fiddlie-manifest}
+\loadmanifest{manifest.yaml}
+\applymanifest
+
+\begin{document}
+  % Front matter
+  \maketitle
+  \tableofcontents
+
+  \section{Introduction}
+
+  % TODO: Introduce the report objective and background
+
+  \section{Methodology}
+
+  % TODO: Describe equipment, setup, and procedure
+
+  \section{Results}
+
+  % TODO: Present measurements and analysis
+
+  \section{Conclusions}
+
+  % TODO: Summarise findings
+
+  % Revision history is auto-generated from manifest
+  \makerevisionhistory
+
+  \importantnotice
+\end{document}

@@ -1,0 +1,27 @@
+\documentclass[]{policy}
+
+% Load manifest support and apply values from YAML file
+\usepackage{fiddlie-manifest}
+\loadmanifest{manifest.yaml}
+\applymanifest
+
+\begin{document}
+  % Front matter
+  \maketitle
+  \tableofcontents
+
+  \section{Purpose}
+
+  % TODO: Describe the purpose and scope of this policy
+
+  \section{Policy}
+
+  % TODO: State the policy
+
+  \section{Responsibilities}
+
+  % TODO: Describe roles and responsibilities
+
+  % Revision history is auto-generated from manifest
+  \makerevisionhistory
+\end{document}
