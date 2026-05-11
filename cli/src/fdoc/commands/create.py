@@ -134,6 +134,12 @@ def find_repo_root() -> Optional[Path]:
     default=None,
     help="Sync with AppSheet document tracker (default: from .fdocrc)",
 )
+@click.option(
+    "--project",
+    "project_override",
+    default=None,
+    help="AppSheet project name. Skips the interactive prompt when --sync is on.",
+)
 def create(
     doctype: str,
     title: Optional[str],
@@ -145,6 +151,7 @@ def create(
     output_dir: Optional[Path],
     folder_name: Optional[str],
     do_sync: bool,
+    project_override: Optional[str],
 ):
     """Create a new document in the documentation repository.
 
@@ -183,7 +190,14 @@ def create(
 
         config = load_config()
         if is_sync_enabled(do_sync, config):
-            document_id = _create_appsheet_document(title, config, repo_root)
+            document_id = _create_appsheet_document(
+                title, config, repo_root, project_override
+            )
+    elif project_override is not None:
+        click.secho(
+            "Warning: --project is ignored when --id is provided.",
+            fg="yellow",
+        )
 
     # Generate default document ID if not provided
     if document_id is None:
@@ -270,14 +284,15 @@ def _create_appsheet_document(
     title: str,
     config: dict,
     repo_root: Optional[Path],
+    project_override: Optional[str] = None,
 ) -> str:
     """Create a document in AppSheet and return the formatted document ID."""
     from fdoc.appsheet import get_active_projects, create_document
     from fdoc.config import save_fdocrc
 
-    # Determine project
+    # Determine project. Explicit --project beats .fdocrc.
     project_id = None
-    project_name = config.get("project")
+    project_name = project_override or config.get("project")
 
     if project_name:
         # Look up project by name
@@ -286,7 +301,7 @@ def _create_appsheet_document(
         if project is None:
             raise click.ClickException(
                 f"Project '{project_name}' not found in AppSheet. "
-                "Check .fdocrc or run without --sync."
+                "Check --project, .fdocrc, or run without --sync."
             )
         project_id = project["Row ID"]
         click.echo(f"  Using project: {project_name}")

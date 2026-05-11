@@ -64,6 +64,7 @@ Options:
 - `--output-dir, -o PATH` - Output directory (defaults to current directory)
 - `--folder-name, -f TEXT` - Custom folder name (defaults to sanitized title)
 - `--sync / --no-sync` - Enable or disable AppSheet sync (default: from `.fdocrc`)
+- `--project TEXT` - AppSheet project name. Skips the interactive prompt when `--sync` is on.
 
 ### `fdoc list`
 
@@ -167,6 +168,7 @@ Options:
 - `-p, --push` - Push commit and tags after locking (`git push --follow-tags`)
 - `-n, --next` - Advance to the next revision after locking (and after pushing if `-p`)
 - `--sync / --no-sync` - Enable or disable AppSheet sync (default: from `.fdocrc`)
+- `--project TEXT` - Accepted for API symmetry; rev lock identifies docs by ID and does not need a project.
 
 ### `fdoc rev next`
 
@@ -194,6 +196,16 @@ fdoc push
 ```
 
 Runs `git push --follow-tags` to push commits along with any revision tags.
+
+### `fdoc projects list`
+
+List active AppSheet project names, one per line.
+
+```bash
+fdoc projects list
+```
+
+Designed for tooling that needs to populate project pickers without prompting. Requires AppSheet credentials in `~/.fdocrc` or `FDOC_APPSHEET_API_KEY`.
 
 ## AppSheet Integration
 
