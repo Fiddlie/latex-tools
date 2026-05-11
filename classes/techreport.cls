@@ -13,8 +13,6 @@
 \RequirePackage{titlesec}
 \newcommand{\sectionbreak}{\clearpage}
 
-% Override \importantnotice with wording appropriate for engineering
-% and research reports (in place of the datasheet product disclaimer).
 \renewcommand{\importantnotice}{%
   \section*{Important Notice}
   \begin{small}
