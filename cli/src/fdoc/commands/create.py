@@ -12,10 +12,12 @@ from jinja2 import Template
 from fdoc.templates import get_template, list_templates
 
 # Available document types and their display names
-DOCUMENT_TYPES = ["datasheet", "requirements"]
+DOCUMENT_TYPES = ["datasheet", "requirements", "policy", "report"]
 DOCUMENT_TYPE_NAMES = {
     "datasheet": "Datasheet",
     "requirements": "Requirements",
+    "policy": "Policy",
+    "report": "Report",
 }
 
 
@@ -148,7 +150,8 @@ def create(
 ):
     """Create a new document in the documentation repository.
 
-    DOCTYPE is the type of document to create: datasheet or requirements
+    DOCTYPE is the type of document to create: datasheet, requirements,
+    policy, or report
 
     Examples:
 
