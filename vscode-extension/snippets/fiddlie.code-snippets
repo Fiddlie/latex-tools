@@ -1,0 +1,133 @@
+{
+  "Fiddlie manifest preamble": {
+    "prefix": ["fdoc-manifest", "fmanifest"],
+    "description": "Load and apply manifest.yaml in the document preamble.",
+    "body": [
+      "\\usepackage{fiddlie-manifest}",
+      "\\loadmanifest{manifest.yaml}",
+      "\\applymanifest"
+    ]
+  },
+  "Datasheet skeleton": {
+    "prefix": "fdoc-datasheet",
+    "description": "Full datasheet document scaffold with manifest support.",
+    "body": [
+      "\\documentclass[]{datasheet}",
+      "",
+      "\\usepackage{fiddlie-manifest}",
+      "\\loadmanifest{manifest.yaml}",
+      "\\applymanifest",
+      "",
+      "\\begin{document}",
+      "  \\maketitle",
+      "  \\tableofcontents",
+      "",
+      "  \\section{${1:Introduction}}",
+      "  $0",
+      "",
+      "  \\makerevisionhistory",
+      "  \\importantnotice",
+      "\\end{document}"
+    ]
+  },
+  "Requirements skeleton": {
+    "prefix": "fdoc-requirements",
+    "description": "Full requirements document scaffold with manifest support.",
+    "body": [
+      "\\documentclass[]{requirements}",
+      "",
+      "\\usepackage{fiddlie-manifest}",
+      "\\loadmanifest{manifest.yaml}",
+      "\\applymanifest",
+      "",
+      "\\begin{document}",
+      "  \\maketitle",
+      "  \\tableofcontents",
+      "",
+      "  \\section{Introduction}",
+      "  \\makedocumentconventions",
+      "",
+      "  \\section{${1:Customer Requirements}}",
+      "  \\begin{requirementstable}",
+      "    \\req{CR-001}{${2:requirement description}}{\\\\${3|musthave,shouldhave,couldhave|}}",
+      "  \\end{requirementstable}",
+      "",
+      "  \\makerevisionhistory",
+      "  \\importantnotice",
+      "\\end{document}"
+    ]
+  },
+  "Important notice": {
+    "prefix": "fdoc-notice",
+    "description": "Insert the standard Fiddlie disclaimer section.",
+    "body": ["\\importantnotice"]
+  },
+  "Revision history": {
+    "prefix": "fdoc-revhistory",
+    "description": "Insert the manifest-driven revision history.",
+    "body": ["\\makerevisionhistory"]
+  },
+  "Company logo": {
+    "prefix": "fdoc-logo",
+    "description": "Insert the company logo (with optional height).",
+    "body": ["\\companylogo[height=${1:0.6cm}]"]
+  },
+  "Set logo": {
+    "prefix": "fdoc-setlogo",
+    "description": "Override the default logo (use in preamble).",
+    "body": ["\\setlogo{${1:logo.pdf}}"]
+  },
+  "Document conventions": {
+    "prefix": "fdoc-conventions",
+    "description": "Insert the requirement-ID prefixes / priority conventions section.",
+    "body": ["\\makedocumentconventions"]
+  },
+  "Requirements table": {
+    "prefix": "fdoc-reqtable",
+    "description": "Empty requirementstable environment.",
+    "body": [
+      "\\begin{requirementstable}",
+      "  \\req{${1|CR,TR,BR,ER,SR|}-${2:001}}{${3:requirement description}}{\\\\${4|musthave,shouldhave,couldhave|}}$0",
+      "\\end{requirementstable}"
+    ]
+  },
+  "Requirement row": {
+    "prefix": "fdoc-req",
+    "description": "A single \\req row.",
+    "body": [
+      "\\req{${1|CR,TR,BR,ER,SR|}-${2:001}}{${3:requirement description}}{\\\\${4|musthave,shouldhave,couldhave|}}"
+    ]
+  },
+  "Requirements table (5 rows)": {
+    "prefix": "fdoc-reqtable5",
+    "description": "Empty requirementstable with five placeholder rows.",
+    "body": [
+      "\\begin{requirementstable}",
+      "  \\req{${1:CR}-001}{${2:requirement}}{\\\\${3|musthave,shouldhave,couldhave|}}",
+      "  \\req{${1:CR}-002}{${4:requirement}}{\\\\${5|musthave,shouldhave,couldhave|}}",
+      "  \\req{${1:CR}-003}{${6:requirement}}{\\\\${7|musthave,shouldhave,couldhave|}}",
+      "  \\req{${1:CR}-004}{${8:requirement}}{\\\\${9|musthave,shouldhave,couldhave|}}",
+      "  \\req{${1:CR}-005}{${10:requirement}}{\\\\${11|musthave,shouldhave,couldhave|}}",
+      "\\end{requirementstable}"
+    ]
+  },
+  "Glossary table": {
+    "prefix": "fdoc-glossary",
+    "description": "Empty glossarytable environment.",
+    "body": [
+      "\\begin{glossarytable}",
+      "  \\term{${1:Term}}{${2:Definition}}$0",
+      "\\end{glossarytable}"
+    ]
+  },
+  "Glossary term": {
+    "prefix": "fdoc-term",
+    "description": "A single \\term row.",
+    "body": ["\\term{${1:Term}}{${2:Definition}}"]
+  },
+  "Requirement ID (inline)": {
+    "prefix": "fdoc-reqid",
+    "description": "Inline requirement ID reference.",
+    "body": ["\\reqid{${1|CR,TR,BR,ER,SR|}-${2:001}}"]
+  }
+}

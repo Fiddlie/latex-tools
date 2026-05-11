@@ -19,6 +19,7 @@ import { docContext, findRepoRoot } from "./workspace";
 import { FdocStatusBar } from "./statusBar";
 import { FdocDecorationProvider } from "./decorations";
 import { checkSubmoduleFreshness } from "./updateNudge";
+import { checkPullBehind } from "./pullBehind";
 
 export function activate(context: vscode.ExtensionContext) {
   const output = vscode.window.createOutputChannel("fdoc");
@@ -104,9 +105,13 @@ export function activate(context: vscode.ExtensionContext) {
     ),
   );
 
-  if (vscode.workspace.getConfiguration("fdoc").get<boolean>("checkSubmoduleUpdates", true)) {
+  const config = vscode.workspace.getConfiguration("fdoc");
+  if (config.get<boolean>("checkSubmoduleUpdates", true)) {
     // Fire and forget; failures are silent inside the helper.
     checkSubmoduleFreshness(context, cli);
+  }
+  if (config.get<boolean>("checkPullBehind", true)) {
+    checkPullBehind(context);
   }
 }
 

@@ -27,8 +27,12 @@ A friendly UI for the `fdoc` CLI. Lets team members create, build, and ship Fidd
 ### AppSheet
 - **fdoc: Configure AppSheet Credentials** — paste your API key once. The extension writes `~/.fdocrc` for you (chmod 600).
 
-### Submodule freshness
+### Submodule & pull freshness
 - Once per day per repo, the extension fetches the `latex-tools` submodule's remote and offers to run `fdoc update` if you're behind. Disable with `fdoc.checkSubmoduleUpdates`.
+- Same cadence for the repo itself: if your current branch is behind its upstream, you get a "Pull now" toast that invokes **fdoc: Pull from Remote**. Disable with `fdoc.checkPullBehind` (e.g. if `git fetch` needs interactive auth on your machine).
+
+### Snippets
+- Prefixes like `fdoc-datasheet`, `fdoc-requirements`, `fdoc-manifest`, `fdoc-reqtable`, `fdoc-req`, `fdoc-glossary`, `fdoc-notice`, `fdoc-revhistory`, `fdoc-logo`, `fdoc-conventions`, and more expand to skeletons and common constructs. Type `fdoc-` in any `.tex` file to see them all.
 
 ## Walkthrough
 
@@ -54,6 +58,7 @@ A built-in setup walkthrough covers: installing TeX Live/MacTeX/MiKTeX, installi
 | `fdoc.confirmPush`               | `true`      | Confirm before `fdoc push`.                                   |
 | `fdoc.defaultPushOnLock`         | `false`     | Default to `--push` when locking a revision.                  |
 | `fdoc.checkSubmoduleUpdates`     | `true`      | Daily check that the latex-tools submodule is up to date.     |
+| `fdoc.checkPullBehind`           | `true`      | Daily check that the current branch is up to date with origin. |
 
 ## Develop
 
