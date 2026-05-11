@@ -1,16 +1,11 @@
 import * as vscode from "vscode";
 import { FdocCli } from "../cli";
 import { listDocuments } from "../documents";
-import { activeWorkspaceFolder, findRepoRoot, pickWorkspaceFolder } from "../workspace";
+import { ensureRepoRoot } from "../workspace";
 
 export async function buildAll(cli: FdocCli) {
-  const folder = activeWorkspaceFolder() ?? (await pickWorkspaceFolder());
-  if (!folder) return;
-  const root = findRepoRoot(folder);
-  if (!root) {
-    vscode.window.showErrorMessage("Not in a Fiddlie documentation repository.");
-    return;
-  }
+  const root = await ensureRepoRoot();
+  if (!root) return;
 
   const docs = await listDocuments(cli, root);
   if (docs.length === 0) {

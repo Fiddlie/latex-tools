@@ -29,6 +29,21 @@ export function activeWorkspaceFolder(): vscode.WorkspaceFolder | undefined {
   return vscode.workspace.workspaceFolders?.[0];
 }
 
+/**
+ * Locate the repo root the user is operating on, or show a friendly error.
+ * Falls back through: active editor's folder → single workspace folder → quickpick.
+ */
+export async function ensureRepoRoot(): Promise<string | undefined> {
+  const folder = activeWorkspaceFolder() ?? (await pickWorkspaceFolder());
+  if (!folder) return undefined;
+  const root = findRepoRoot(folder);
+  if (!root) {
+    vscode.window.showErrorMessage("Not in a Fiddlie documentation repository.");
+    return undefined;
+  }
+  return root;
+}
+
 /** Quickpick a workspace folder when more than one is open. */
 export async function pickWorkspaceFolder(): Promise<vscode.WorkspaceFolder | undefined> {
   const folders = vscode.workspace.workspaceFolders ?? [];

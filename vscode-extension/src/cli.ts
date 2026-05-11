@@ -1,6 +1,9 @@
 import * as cp from "child_process";
 import * as vscode from "vscode";
 
+const INSTALL_COMMAND =
+  "pipx install git+ssh://git@github.com/Fiddlie/latex-tools.git#subdirectory=cli";
+
 export interface RunOptions {
   cwd: string;
   args: string[];
@@ -96,24 +99,17 @@ export class FdocCli {
     );
   }
 
-  private surfaceMissingCli() {
-    const python = vscode.workspace.getConfiguration("fdoc").get<string>("python", "python3");
-    const installCmd = `pipx install git+ssh://git@github.com/Fiddlie/latex-tools.git#subdirectory=cli`;
-    vscode.window
-      .showErrorMessage(
-        `fdoc executable not found. Install it with pipx, or set the "fdoc.cliPath" setting.`,
-        "Copy install command",
-        "Open settings",
-      )
-      .then((choice) => {
-        if (choice === "Copy install command") {
-          vscode.env.clipboard.writeText(installCmd);
-        } else if (choice === "Open settings") {
-          vscode.commands.executeCommand("workbench.action.openSettings", "fdoc.cliPath");
-        }
-      });
-    this.output.appendLine(
-      `\nfdoc not found. Try: ${python} -m pipx install git+ssh://git@github.com/Fiddlie/latex-tools.git#subdirectory=cli`,
+  private async surfaceMissingCli(): Promise<void> {
+    this.output.appendLine(`\nfdoc not found. Try: ${INSTALL_COMMAND}`);
+    const choice = await vscode.window.showErrorMessage(
+      `fdoc executable not found. Install it with pipx, or set the "fdoc.cliPath" setting.`,
+      "Copy install command",
+      "Open settings",
     );
+    if (choice === "Copy install command") {
+      await vscode.env.clipboard.writeText(INSTALL_COMMAND);
+    } else if (choice === "Open settings") {
+      await vscode.commands.executeCommand("workbench.action.openSettings", "fdoc.cliPath");
+    }
   }
 }

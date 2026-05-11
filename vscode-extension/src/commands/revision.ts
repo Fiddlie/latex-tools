@@ -1,21 +1,15 @@
 import * as vscode from "vscode";
 import { FdocCli } from "../cli";
 import { DocumentItem } from "../tree";
-import { listDocuments } from "../documents";
-import {
-  activeWorkspaceFolder,
-  docContext,
-  findRepoRoot,
-  pickWorkspaceFolder,
-} from "../workspace";
 import { hasUncommittedChanges } from "../git";
+import { resolveDocTarget } from "../target";
 
 export async function revLock(
   cli: FdocCli,
   item: DocumentItem | vscode.Uri | undefined,
   refresh: () => void,
 ) {
-  const target = await resolveTarget(cli, item);
+  const target = await resolveDocTarget(cli, item);
   if (!target) return;
 
   if (await hasUncommittedChanges(target.root, target.docName)) {
@@ -62,7 +56,7 @@ export async function revNext(
   item: DocumentItem | vscode.Uri | undefined,
   refresh: () => void,
 ) {
-  const target = await resolveTarget(cli, item);
+  const target = await resolveDocTarget(cli, item);
   if (!target) return;
 
   const result = await cli.run({
@@ -79,10 +73,8 @@ export async function revNext(
 }
 
 export async function syncRevision(cli: FdocCli, item: DocumentItem | vscode.Uri | undefined) {
-  const target = await resolveTarget(cli, item);
+  const target = await resolveDocTarget(cli, item);
   if (!target) return;
-  // Re-run rev lock with --sync to trigger AppSheet update without changing local state.
-  // For now we just inform users to run `fdoc rev lock --sync` from the CLI when needed.
   const result = await cli.run({
     cwd: target.root,
     args: ["rev", "lock", target.docName, "--sync"],
@@ -93,35 +85,4 @@ export async function syncRevision(cli: FdocCli, item: DocumentItem | vscode.Uri
       "AppSheet sync failed. Ensure ~/.fdocrc has appsheet_api_key set and the project is configured.",
     );
   }
-}
-
-async function resolveTarget(
-  cli: FdocCli,
-  item: DocumentItem | vscode.Uri | undefined,
-): Promise<{ root: string; docName: string } | undefined> {
-  if (item instanceof DocumentItem) return { root: item.repoRoot, docName: item.docName };
-  if (item instanceof vscode.Uri) {
-    const ctx = docContext(item);
-    if (ctx) return ctx;
-  }
-  const editor = vscode.window.activeTextEditor;
-  if (editor) {
-    const ctx = docContext(editor.document.uri);
-    if (ctx) return ctx;
-  }
-  const folder = activeWorkspaceFolder() ?? (await pickWorkspaceFolder());
-  if (!folder) return undefined;
-  const root = findRepoRoot(folder);
-  if (!root) {
-    vscode.window.showErrorMessage("Not in a Fiddlie documentation repository.");
-    return undefined;
-  }
-  const docs = await listDocuments(cli, root);
-  if (docs.length === 0) {
-    vscode.window.showInformationMessage("No documents found.");
-    return undefined;
-  }
-  const picked = await vscode.window.showQuickPick(docs, { placeHolder: "Select a document" });
-  if (!picked) return undefined;
-  return { root, docName: picked };
 }

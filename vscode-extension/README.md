@@ -54,7 +54,6 @@ A built-in setup walkthrough covers: installing TeX Live/MacTeX/MiKTeX, installi
 | Setting                          | Default     | Purpose                                                       |
 | -------------------------------- | ----------- | ------------------------------------------------------------- |
 | `fdoc.cliPath`                   | `fdoc`      | Path to the `fdoc` executable.                                |
-| `fdoc.python`                    | `python3`   | Used in the install hint when fdoc is missing.                |
 | `fdoc.confirmPush`               | `true`      | Confirm before `fdoc push`.                                   |
 | `fdoc.defaultPushOnLock`         | `false`     | Default to `--push` when locking a revision.                  |
 | `fdoc.checkSubmoduleUpdates`     | `true`      | Daily check that the latex-tools submodule is up to date.     |

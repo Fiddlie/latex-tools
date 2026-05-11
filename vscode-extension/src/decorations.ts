@@ -27,7 +27,12 @@ export class FdocDecorationProvider
   private readonly disposables: vscode.Disposable[] = [];
 
   constructor() {
-    const watcher = vscode.workspace.createFileSystemWatcher("**/*");
+    // Only files that can actually affect a doc's git status — typing
+    // and tabbing in unsaved buffers doesn't change git's view, only
+    // saves do, and only for tracked file types under the repo.
+    const watcher = vscode.workspace.createFileSystemWatcher(
+      "**/*.{tex,bib,cls,sty,lua,yaml,yml,pdf,png,jpg,jpeg,svg}",
+    );
     const refresh = () => this.scheduleRefresh();
     this.disposables.push(
       watcher,

@@ -3,6 +3,7 @@ import * as path from "path";
 import * as vscode from "vscode";
 import { FdocCli } from "./cli";
 import { listDocuments } from "./documents";
+import { readManifest } from "./manifest";
 import { findRepoRoot } from "./workspace";
 
 export class DocumentItem extends vscode.TreeItem {
@@ -59,18 +60,10 @@ export class DocumentsTreeProvider implements vscode.TreeDataProvider<DocumentIt
 }
 
 function describeDoc(root: string, doc: string): string | undefined {
-  const manifest = path.join(root, doc, "manifest.yaml");
-  if (!fs.existsSync(manifest)) return undefined;
-  try {
-    const content = fs.readFileSync(manifest, "utf8");
-    const id = content.match(/^\s*id:\s*["']?([^"'\n]+)/m)?.[1]?.trim();
-    const rev = content.match(/^\s*number:\s*["']?([^"'\n]+)/m)?.[1]?.trim();
-    const draft = /draft:\s*true/i.test(content);
-    const parts: string[] = [];
-    if (id) parts.push(id);
-    if (rev) parts.push(`rev ${rev}${draft ? " (draft)" : ""}`);
-    return parts.join(" · ") || undefined;
-  } catch {
-    return undefined;
-  }
+  const summary = readManifest(path.join(root, doc));
+  if (!summary) return undefined;
+  const parts: string[] = [];
+  if (summary.id) parts.push(summary.id);
+  if (summary.revision) parts.push(`rev ${summary.revision}${summary.draft ? " (draft)" : ""}`);
+  return parts.join(" · ") || undefined;
 }

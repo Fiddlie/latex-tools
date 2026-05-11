@@ -265,11 +265,6 @@
           "default": "fdoc",
           "description": "Path to the fdoc executable. Use an absolute path if fdoc is not on your PATH."
         },
-        "fdoc.python": {
-          "type": "string",
-          "default": "python3",
-          "description": "Python interpreter used for the install hint when fdoc is missing."
-        },
         "fdoc.confirmPush": {
           "type": "boolean",
           "default": true,

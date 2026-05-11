@@ -1,18 +1,13 @@
 import * as vscode from "vscode";
 import { FdocCli } from "../cli";
 import { DocumentItem } from "../tree";
-import { listDocuments } from "../documents";
-import {
-  activeWorkspaceFolder,
-  docContext,
-  findRepoRoot,
-  pickWorkspaceFolder,
-} from "../workspace";
 import { git, statusLines } from "../git";
+import { resolveDocTarget } from "../target";
+import { gitOutput } from "../output";
 
 /** Stage the document folder, prompt for a message, commit, and optionally push. */
 export async function commitDocument(cli: FdocCli, item: DocumentItem | vscode.Uri | undefined) {
-  const target = await resolveTarget(cli, item);
+  const target = await resolveDocTarget(cli, item);
   if (!target) return;
 
   const lines = await statusLines(target.root, target.docName);
@@ -40,7 +35,7 @@ export async function commitDocument(cli: FdocCli, item: DocumentItem | vscode.U
   );
   if (!push) return;
 
-  const channel = vscode.window.createOutputChannel("fdoc git");
+  const channel = gitOutput();
   channel.show(true);
   channel.appendLine(`Changes:\n${summary}\n`);
 
@@ -73,35 +68,4 @@ export async function commitDocument(cli: FdocCli, item: DocumentItem | vscode.U
   vscode.window.showInformationMessage(
     push.value ? `Committed and pushed ${target.docName}.` : `Committed ${target.docName}.`,
   );
-}
-
-async function resolveTarget(
-  cli: FdocCli,
-  item: DocumentItem | vscode.Uri | undefined,
-): Promise<{ root: string; docName: string } | undefined> {
-  if (item instanceof DocumentItem) return { root: item.repoRoot, docName: item.docName };
-  if (item instanceof vscode.Uri) {
-    const ctx = docContext(item);
-    if (ctx) return ctx;
-  }
-  const editor = vscode.window.activeTextEditor;
-  if (editor) {
-    const ctx = docContext(editor.document.uri);
-    if (ctx) return ctx;
-  }
-  const folder = activeWorkspaceFolder() ?? (await pickWorkspaceFolder());
-  if (!folder) return undefined;
-  const root = findRepoRoot(folder);
-  if (!root) {
-    vscode.window.showErrorMessage("Not in a Fiddlie documentation repository.");
-    return undefined;
-  }
-  const docs = await listDocuments(cli, root);
-  if (docs.length === 0) {
-    vscode.window.showInformationMessage("No documents found.");
-    return undefined;
-  }
-  const picked = await vscode.window.showQuickPick(docs, { placeHolder: "Select a document" });
-  if (!picked) return undefined;
-  return { root, docName: picked };
 }

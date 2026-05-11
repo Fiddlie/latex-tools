@@ -20,6 +20,7 @@ import { FdocStatusBar } from "./statusBar";
 import { FdocDecorationProvider } from "./decorations";
 import { checkSubmoduleFreshness } from "./updateNudge";
 import { checkPullBehind } from "./pullBehind";
+import { disposeOutput } from "./output";
 
 export function activate(context: vscode.ExtensionContext) {
   const output = vscode.window.createOutputChannel("fdoc");
@@ -116,5 +117,5 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
-  /* noop */
+  disposeOutput();
 }
