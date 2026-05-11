@@ -42,3 +42,32 @@ export async function pickWorkspaceFolder(): Promise<vscode.WorkspaceFolder | un
   });
   return picked;
 }
+
+/**
+ * Given a file URI inside a doc folder, return its repo root + document name.
+ * Returns undefined if the URI isn't under a recognised doc folder.
+ *
+ * A doc folder is the direct child of the repo root that contains the file.
+ */
+export function docContext(uri: vscode.Uri | undefined): { root: string; docName: string } | undefined {
+  if (!uri || uri.scheme !== "file") return undefined;
+  const folder = vscode.workspace.getWorkspaceFolder(uri);
+  if (!folder) return undefined;
+  const root = findRepoRoot(folder);
+  if (!root) return undefined;
+  const rel = path.relative(root, uri.fsPath);
+  if (rel.startsWith("..") || path.isAbsolute(rel)) return undefined;
+  const segments = rel.split(path.sep);
+  const docName = segments[0];
+  if (!docName) return undefined;
+  const docDir = path.join(root, docName);
+  if (!fs.existsSync(docDir) || !fs.statSync(docDir).isDirectory()) return undefined;
+  // A doc folder has either a manifest.yaml or a `<docName>.tex`.
+  if (
+    !fs.existsSync(path.join(docDir, "manifest.yaml")) &&
+    !fs.existsSync(path.join(docDir, `${docName}.tex`))
+  ) {
+    return undefined;
+  }
+  return { root, docName };
+}

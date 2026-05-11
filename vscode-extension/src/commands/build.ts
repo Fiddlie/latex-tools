@@ -3,12 +3,17 @@ import * as path from "path";
 import * as vscode from "vscode";
 import { FdocCli } from "../cli";
 import { DocumentItem } from "../tree";
-import { activeWorkspaceFolder, findRepoRoot, pickWorkspaceFolder } from "../workspace";
+import {
+  activeWorkspaceFolder,
+  docContext,
+  findRepoRoot,
+  pickWorkspaceFolder,
+} from "../workspace";
 import { listDocuments } from "../documents";
 
 export async function buildDocument(
   cli: FdocCli,
-  item: DocumentItem | undefined,
+  item: DocumentItem | vscode.Uri | undefined,
   opts: { clean?: boolean } = {},
 ): Promise<void> {
   const target = await resolveTarget(cli, item);
@@ -38,11 +43,37 @@ export async function buildDocument(
 
 export async function openPdf(
   cli: FdocCli,
-  item: DocumentItem | undefined,
+  item: DocumentItem | vscode.Uri | undefined,
 ): Promise<void> {
   const target = await resolveTarget(cli, item);
   if (!target) return;
   await openPdfFor(target.root, target.docName);
+}
+
+export async function openManifest(
+  cli: FdocCli,
+  item: DocumentItem | vscode.Uri | undefined,
+): Promise<void> {
+  const target = await resolveTarget(cli, item);
+  if (!target) return;
+  const manifest = path.join(target.root, target.docName, "manifest.yaml");
+  if (!fs.existsSync(manifest)) {
+    vscode.window.showWarningMessage(`${target.docName} has no manifest.yaml.`);
+    return;
+  }
+  await vscode.window.showTextDocument(vscode.Uri.file(manifest));
+}
+
+export async function revealInOS(
+  cli: FdocCli,
+  item: DocumentItem | vscode.Uri | undefined,
+): Promise<void> {
+  const target = await resolveTarget(cli, item);
+  if (!target) return;
+  await vscode.commands.executeCommand(
+    "revealFileInOS",
+    vscode.Uri.file(path.join(target.root, target.docName)),
+  );
 }
 
 async function openPdfFor(root: string, docName: string): Promise<void> {
@@ -60,10 +91,22 @@ async function openPdfFor(root: string, docName: string): Promise<void> {
 
 async function resolveTarget(
   cli: FdocCli,
-  item: DocumentItem | undefined,
+  item: DocumentItem | vscode.Uri | undefined,
 ): Promise<{ root: string; docName: string } | undefined> {
-  if (item) {
+  if (item instanceof DocumentItem) {
     return { root: item.repoRoot, docName: item.docName };
+  }
+  if (item instanceof vscode.Uri) {
+    const ctx = docContext(item);
+    if (ctx) return ctx;
+    vscode.window.showWarningMessage("This file isn't inside an fdoc document folder.");
+    return undefined;
+  }
+  // No item passed: try the active editor first, then fall back to a picker.
+  const editor = vscode.window.activeTextEditor;
+  if (editor) {
+    const ctx = docContext(editor.document.uri);
+    if (ctx) return ctx;
   }
   const folder = activeWorkspaceFolder() ?? (await pickWorkspaceFolder());
   if (!folder) return undefined;

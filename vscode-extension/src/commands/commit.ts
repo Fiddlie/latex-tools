@@ -2,11 +2,16 @@ import * as vscode from "vscode";
 import { FdocCli } from "../cli";
 import { DocumentItem } from "../tree";
 import { listDocuments } from "../documents";
-import { activeWorkspaceFolder, findRepoRoot, pickWorkspaceFolder } from "../workspace";
+import {
+  activeWorkspaceFolder,
+  docContext,
+  findRepoRoot,
+  pickWorkspaceFolder,
+} from "../workspace";
 import { git, statusLines } from "../git";
 
 /** Stage the document folder, prompt for a message, commit, and optionally push. */
-export async function commitDocument(cli: FdocCli, item: DocumentItem | undefined) {
+export async function commitDocument(cli: FdocCli, item: DocumentItem | vscode.Uri | undefined) {
   const target = await resolveTarget(cli, item);
   if (!target) return;
 
@@ -72,9 +77,18 @@ export async function commitDocument(cli: FdocCli, item: DocumentItem | undefine
 
 async function resolveTarget(
   cli: FdocCli,
-  item: DocumentItem | undefined,
+  item: DocumentItem | vscode.Uri | undefined,
 ): Promise<{ root: string; docName: string } | undefined> {
-  if (item) return { root: item.repoRoot, docName: item.docName };
+  if (item instanceof DocumentItem) return { root: item.repoRoot, docName: item.docName };
+  if (item instanceof vscode.Uri) {
+    const ctx = docContext(item);
+    if (ctx) return ctx;
+  }
+  const editor = vscode.window.activeTextEditor;
+  if (editor) {
+    const ctx = docContext(editor.document.uri);
+    if (ctx) return ctx;
+  }
   const folder = activeWorkspaceFolder() ?? (await pickWorkspaceFolder());
   if (!folder) return undefined;
   const root = findRepoRoot(folder);

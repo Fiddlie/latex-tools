@@ -2,7 +2,7 @@
   "name": "fdoc",
   "displayName": "fdoc - Fiddlie Documentation",
   "description": "Create, build, and manage Fiddlie LaTeX documentation repositories from VS Code.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "fiddlie",
   "private": true,
   "license": "MIT",
@@ -40,9 +40,21 @@
         "title": "fdoc: Clean and Build Document"
       },
       {
+        "command": "fdoc.buildAll",
+        "title": "fdoc: Build All Documents"
+      },
+      {
         "command": "fdoc.openPdf",
         "title": "fdoc: Open Built PDF",
         "icon": "$(file-pdf)"
+      },
+      {
+        "command": "fdoc.openManifest",
+        "title": "fdoc: Open Manifest"
+      },
+      {
+        "command": "fdoc.revealInOS",
+        "title": "fdoc: Reveal Document Folder"
       },
       {
         "command": "fdoc.revLock",
@@ -55,6 +67,10 @@
       {
         "command": "fdoc.push",
         "title": "fdoc: Push Commits and Tags"
+      },
+      {
+        "command": "fdoc.pull",
+        "title": "fdoc: Pull from Remote"
       },
       {
         "command": "fdoc.update",
@@ -72,6 +88,14 @@
       {
         "command": "fdoc.syncRevision",
         "title": "fdoc: Sync Revision with AppSheet"
+      },
+      {
+        "command": "fdoc.configureAppsheet",
+        "title": "fdoc: Configure AppSheet Credentials"
+      },
+      {
+        "command": "fdoc.openWalkthrough",
+        "title": "fdoc: Open Setup Walkthrough"
       }
     ],
     "menus": {
@@ -104,6 +128,16 @@
           "group": "build@1"
         },
         {
+          "command": "fdoc.openManifest",
+          "when": "view == fdoc.documents && viewItem == document",
+          "group": "navigation@1"
+        },
+        {
+          "command": "fdoc.revealInOS",
+          "when": "view == fdoc.documents && viewItem == document",
+          "group": "navigation@2"
+        },
+        {
           "command": "fdoc.revLock",
           "when": "view == fdoc.documents && viewItem == document",
           "group": "revision@1"
@@ -123,6 +157,25 @@
           "when": "view == fdoc.documents && viewItem == document",
           "group": "git@1"
         }
+      ],
+      "editor/title": [
+        {
+          "command": "fdoc.build",
+          "when": "resourceExtname == .tex && fdoc.editorInDoc",
+          "group": "navigation@1"
+        },
+        {
+          "command": "fdoc.openPdf",
+          "when": "resourceExtname == .tex && fdoc.editorInDoc",
+          "group": "navigation@2"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "fdoc.build",
+          "when": "resourceExtname == .tex && fdoc.hasRepo",
+          "group": "fdoc@1"
+        }
       ]
     },
     "views": {
@@ -137,7 +190,65 @@
     "viewsWelcome": [
       {
         "view": "fdoc.documents",
-        "contents": "No fdoc workspace detected.\n[Initialize Repository](command:fdoc.init)\nOr open a folder containing a `latex-tools` submodule."
+        "contents": "No fdoc workspace detected.\n[Initialize Repository](command:fdoc.init)\n[Open Setup Walkthrough](command:fdoc.openWalkthrough)\nOr open a folder containing a `latex-tools` submodule."
+      }
+    ],
+    "yamlValidation": [
+      {
+        "fileMatch": "manifest.yaml",
+        "url": "./schemas/manifest.schema.json"
+      }
+    ],
+    "walkthroughs": [
+      {
+        "id": "fdoc.setup",
+        "title": "Set up fdoc",
+        "description": "Install dependencies and connect to the Fiddlie documentation workflow.",
+        "steps": [
+          {
+            "id": "tex",
+            "title": "Install a LaTeX distribution",
+            "description": "fdoc builds documents with lualatex + latexmk. Install MacTeX, TeX Live, or MiKTeX.",
+            "media": { "markdown": "media/walkthrough/install-tex.md" }
+          },
+          {
+            "id": "python",
+            "title": "Install Python 3.9+ and pipx",
+            "description": "The fdoc CLI is a Python tool. We install it with pipx for isolation.",
+            "media": { "markdown": "media/walkthrough/install-python.md" }
+          },
+          {
+            "id": "fdoc",
+            "title": "Install the fdoc CLI",
+            "description": "Install fdoc from the Fiddlie repo with pipx.",
+            "media": { "markdown": "media/walkthrough/install-fdoc.md" }
+          },
+          {
+            "id": "latex-workshop",
+            "title": "LaTeX Workshop (auto-installed)",
+            "description": "The recommended LaTeX editor extension is installed as a dependency.",
+            "media": { "markdown": "media/walkthrough/latex-workshop.md" }
+          },
+          {
+            "id": "appsheet",
+            "title": "Connect to AppSheet (optional)",
+            "description": "Run \"fdoc: Configure AppSheet Credentials\" to enable doc-ID auto-assignment.",
+            "media": { "markdown": "media/walkthrough/appsheet.md" },
+            "completionEvents": [
+              "onCommand:fdoc.configureAppsheet"
+            ]
+          },
+          {
+            "id": "first-doc",
+            "title": "Create your first document",
+            "description": "Initialize a new repo or create a document inside an existing one.",
+            "media": { "markdown": "media/walkthrough/first-doc.md" },
+            "completionEvents": [
+              "onCommand:fdoc.init",
+              "onCommand:fdoc.create"
+            ]
+          }
+        ]
       }
     ],
     "configuration": {
@@ -162,6 +273,11 @@
           "type": "boolean",
           "default": false,
           "description": "Pass --push to `fdoc rev lock` by default."
+        },
+        "fdoc.checkSubmoduleUpdates": {
+          "type": "boolean",
+          "default": true,
+          "description": "Check whether latex-tools is behind its remote once per day and offer to update."
         }
       }
     }
