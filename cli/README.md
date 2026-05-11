@@ -195,6 +195,31 @@ fdoc push
 
 Runs `git push --follow-tags` to push commits along with any revision tags.
 
+## Shell completion
+
+`fdoc` exposes shell completion for the `DOCNAME` argument used by `fdoc build`, `fdoc name`, `fdoc rev lock`, and `fdoc rev next`. When you press <kbd>Tab</kbd>, the completer lists document folder names found in the current repository.
+
+Install it once with:
+
+```bash
+fdoc completion install
+```
+
+This auto-detects your shell from `$SHELL` and writes the completion script to a stable location. Per-shell behaviour:
+
+- **fish** → installed to `~/.config/fish/completions/fdoc.fish` and auto-loaded by fish. No further setup needed; just open a new shell.
+- **bash** → installed to `~/.local/share/bash-completion/completions/fdoc`. Auto-loaded by `bash-completion` ≥ 2.1. Requires bash ≥ 4.4 (macOS users: `brew install bash bash-completion@2`).
+- **zsh** → installed to `~/.local/share/fdoc/fdoc.zsh`. Add `source ~/.local/share/fdoc/fdoc.zsh` to your `~/.zshrc` (the install command prints the exact line).
+
+To target a specific shell or print the script without writing it:
+
+```bash
+fdoc completion install --shell zsh
+fdoc completion install --shell bash --print > /etc/bash_completion.d/fdoc
+```
+
+Completion only returns results when you run `fdoc` from inside a Fiddlie documentation repository.
+
 ## AppSheet Integration
 
 fdoc can sync with the Fiddlie AppSheet document tracker to auto-assign document IDs and update revision status.

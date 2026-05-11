@@ -12,6 +12,7 @@ from fdoc.commands.build import find_current_document
 from fdoc.commands.create import find_repo_root, get_git_user_name
 from fdoc.commands.list import find_documents
 from fdoc.commands.name import load_manifest
+from fdoc.completion import complete_docname
 
 
 def resolve_document(repo_root: Path, docname: str) -> dict:
@@ -166,7 +167,7 @@ def rev():
 
 
 @rev.command()
-@click.argument("docname")
+@click.argument("docname", shell_complete=complete_docname)
 @click.option("-p", "--push", "do_push", is_flag=True, help="Push commit and tags after locking")
 @click.option("-n", "--next", "do_next", is_flag=True, help="Advance to next revision after locking")
 @click.option("--sync/--no-sync", "do_sync", default=None, help="Sync with AppSheet document tracker (default: from .fdocrc)")
@@ -270,7 +271,7 @@ def lock(docname: str, do_push: bool, do_next: bool, do_sync: bool):
 
 
 @rev.command("next")
-@click.argument("docname")
+@click.argument("docname", shell_complete=complete_docname)
 def next_rev(docname: str):
     """Advance a document to its next revision.
 

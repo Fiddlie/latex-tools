@@ -10,6 +10,7 @@ import yaml
 from fdoc.commands.create import find_repo_root
 from fdoc.commands.list import find_documents
 from fdoc.commands.build import find_current_document
+from fdoc.completion import complete_docname
 
 
 def load_manifest(doc_path: Path) -> Optional[dict]:
@@ -74,7 +75,7 @@ def replace_spaces(name: str) -> str:
 
 
 @click.command()
-@click.argument("docname")
+@click.argument("docname", shell_complete=complete_docname)
 @click.option(
     "--safe", "-s",
     is_flag=True,

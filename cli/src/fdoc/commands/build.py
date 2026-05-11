@@ -8,6 +8,7 @@ import click
 
 from fdoc.commands.create import find_repo_root
 from fdoc.commands.list import find_documents
+from fdoc.completion import complete_docname
 
 
 def find_current_document(repo_root: Path) -> Optional[dict]:
@@ -31,7 +32,7 @@ def find_current_document(repo_root: Path) -> Optional[dict]:
 
 
 @click.command()
-@click.argument("docname")
+@click.argument("docname", shell_complete=complete_docname)
 @click.option(
     "--clean", "-c",
     is_flag=True,
