@@ -12,12 +12,13 @@ from jinja2 import Template
 from fdoc.templates import get_template, list_templates
 
 # Available document types and their display names
-DOCUMENT_TYPES = ["datasheet", "requirements", "policy", "report"]
+DOCUMENT_TYPES = ["datasheet", "requirements", "policy", "report", "onepager"]
 DOCUMENT_TYPE_NAMES = {
     "datasheet": "Datasheet",
     "requirements": "Requirements",
     "policy": "Policy",
     "report": "Report",
+    "onepager": "One-pager",
 }
 
 

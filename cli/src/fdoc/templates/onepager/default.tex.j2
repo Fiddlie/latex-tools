@@ -1,0 +1,27 @@
+\documentclass[]{onepager}
+
+% Load manifest support and apply values from YAML file
+\usepackage{fiddlie-manifest}
+\loadmanifest{manifest.yaml}
+\applymanifest
+
+\begin{document}
+  \maketitle
+
+  \begin{small}
+    % TODO: Optional preamble — a paragraph or two of context before the
+    % columned body. Delete this block if not needed.
+  \end{small}
+
+  \vspace{4pt}
+  \begin{twocol}
+    \pinksection{First topic}
+    % TODO: Content for the first topic.
+
+    \yellowsection{Second topic}
+    % TODO: Content for the second topic.
+
+    \bluesection{Third topic}
+    % TODO: Content for the third topic.
+  \end{twocol}
+\end{document}
