@@ -75,6 +75,13 @@ def update(ref: str):
         _sync_github_workflow(repo_root)
         _sync_claude_guide(repo_root)
 
+        # Ensure FontAwesome icon fonts are installed so users get the full
+        # update (templates + fonts) in one command rather than seeing a
+        # surprise download on their next build.
+        from fdoc import fonts as fonts_lib
+        click.echo("  Checking FontAwesome icon fonts...")
+        fonts_lib.ensure(on_progress=lambda m: click.echo(f"    {m}"))
+
         click.echo()
         click.secho("Successfully updated latex-tools!", fg="green", bold=True)
         if commit_info:
