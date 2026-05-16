@@ -1,0 +1,143 @@
+% fiddlie-icons.sty - Font Awesome 7 Pro icon support for Fiddlie documents
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{fiddlie-icons}[2026/05/16 Fiddlie FontAwesome Pro Icons]
+
+% LuaLaTeX only — we use kpse + Lua for the name lookup and fontspec for
+% the OTF font families.
+\RequirePackage{iftex}
+\ifluatex\else
+  \PackageError{fiddlie-icons}{This package requires LuaLaTeX}{}
+\fi
+
+\RequirePackage{fontspec}
+\RequirePackage{xparse}
+\RequirePackage{luacode}
+
+% Load the name→codepoint Lua table from the latex-tools tree.
+% Fonts themselves are resolved via kpse — they're installed to TEXMFHOME
+% by `fdoc fonts install` (or `fdoc fonts ensure` lazy-installs on demand).
+\directlua{
+  local pkg_path = kpse.find_file("fiddlie-icons.sty", "tex")
+  local dir = pkg_path and pkg_path:match("(.*/)") or ""
+  local icons_path = dir .. "../lua/fa-icons.lua"
+  local ok, mod = pcall(dofile, icons_path)
+  fa_icons = ok and mod or {codepoints = {}, brand_only = {}}
+}
+
+% Every FA7 Pro family exposed as a fontspec family bound to \fa@<style>.
+\newfontfamily{\fa@solid}{Font Awesome 7 Pro-Solid-900.otf}
+\newfontfamily{\fa@regular}{Font Awesome 7 Pro-Regular-400.otf}
+\newfontfamily{\fa@light}{Font Awesome 7 Pro-Light-300.otf}
+\newfontfamily{\fa@thin}{Font Awesome 7 Pro-Thin-100.otf}
+\newfontfamily{\fa@sharpsolid}{Font Awesome 7 Sharp-Solid-900.otf}
+\newfontfamily{\fa@sharpregular}{Font Awesome 7 Sharp-Regular-400.otf}
+\newfontfamily{\fa@sharplight}{Font Awesome 7 Sharp-Light-300.otf}
+\newfontfamily{\fa@sharpthin}{Font Awesome 7 Sharp-Thin-100.otf}
+\newfontfamily{\fa@duotonesolid}{Font Awesome 7 Duotone-Solid-900.otf}
+\newfontfamily{\fa@duotoneregular}{Font Awesome 7 Duotone-Regular-400.otf}
+\newfontfamily{\fa@duotonelight}{Font Awesome 7 Duotone-Light-300.otf}
+\newfontfamily{\fa@duotonethin}{Font Awesome 7 Duotone-Thin-100.otf}
+\newfontfamily{\fa@sharpduotonesolid}{Font Awesome 7 Sharp Duotone-Solid-900.otf}
+\newfontfamily{\fa@sharpduotoneregular}{Font Awesome 7 Sharp Duotone-Regular-400.otf}
+\newfontfamily{\fa@sharpduotonelight}{Font Awesome 7 Sharp Duotone-Light-300.otf}
+\newfontfamily{\fa@sharpduotonethin}{Font Awesome 7 Sharp Duotone-Thin-100.otf}
+\newfontfamily{\fa@brands}{Font Awesome 7 Brands-Regular-400.otf}
+% FA7 novelty families
+\newfontfamily{\fa@chisel}{Font Awesome 7 Chisel-Regular-400.otf}
+\newfontfamily{\fa@etch}{Font Awesome 7 Etch-Solid-900.otf}
+\newfontfamily{\fa@graphite}{Font Awesome 7 Graphite-Thin-100.otf}
+\newfontfamily{\fa@jelly}{Font Awesome 7 Jelly-Regular-400.otf}
+\newfontfamily{\fa@jellyduo}{Font Awesome 7 Jelly Duo-Regular-400.otf}
+\newfontfamily{\fa@jellyfill}{Font Awesome 7 Jelly Fill-Regular-400.otf}
+\newfontfamily{\fa@notdog}{Font Awesome 7 Notdog-Solid-900.otf}
+\newfontfamily{\fa@notdogduo}{Font Awesome 7 Notdog Duo-Solid-900.otf}
+\newfontfamily{\fa@slab}{Font Awesome 7 Slab-Regular-400.otf}
+\newfontfamily{\fa@slabpress}{Font Awesome 7 Slab Press-Regular-400.otf}
+\newfontfamily{\fa@thumbprint}{Font Awesome 7 Thumbprint-Light-300.otf}
+\newfontfamily{\fa@utility}{Font Awesome 7 Utility-Semibold-600.otf}
+\newfontfamily{\fa@utilityduo}{Font Awesome 7 Utility Duo-Semibold-600.otf}
+\newfontfamily{\fa@utilityfill}{Font Awesome 7 Utility Fill-Semibold-600.otf}
+\newfontfamily{\fa@whiteboard}{Font Awesome 7 Whiteboard-Semibold-600.otf}
+
+% Lua helper: resolve name+style to a font family + codepoint and print
+% the glyph. Errors loudly on unknown name or style — beats silent .notdef.
+% Brand-only icons (github, slack, etc.) always render through \fa@brands
+% regardless of the requested style.
+% Font-family commands live in the @-letter namespace, so we route through
+% \csname...\endcsname when emitting from Lua — that's catcode-independent.
+\begin{luacode*}
+  local style_to_csname = {
+    ["solid"]                  = "fa@solid",
+    ["regular"]                = "fa@regular",
+    ["light"]                  = "fa@light",
+    ["thin"]                   = "fa@thin",
+    ["sharp"]                  = "fa@sharpsolid",
+    ["sharp-solid"]            = "fa@sharpsolid",
+    ["sharp-regular"]          = "fa@sharpregular",
+    ["sharp-light"]            = "fa@sharplight",
+    ["sharp-thin"]             = "fa@sharpthin",
+    ["duotone"]                = "fa@duotonesolid",
+    ["duotone-solid"]          = "fa@duotonesolid",
+    ["duotone-regular"]        = "fa@duotoneregular",
+    ["duotone-light"]          = "fa@duotonelight",
+    ["duotone-thin"]           = "fa@duotonethin",
+    ["sharp-duotone"]          = "fa@sharpduotonesolid",
+    ["sharp-duotone-solid"]    = "fa@sharpduotonesolid",
+    ["sharp-duotone-regular"]  = "fa@sharpduotoneregular",
+    ["sharp-duotone-light"]    = "fa@sharpduotonelight",
+    ["sharp-duotone-thin"]     = "fa@sharpduotonethin",
+    ["brands"]                 = "fa@brands",
+    ["chisel"]                 = "fa@chisel",
+    ["etch"]                   = "fa@etch",
+    ["graphite"]               = "fa@graphite",
+    ["jelly"]                  = "fa@jelly",
+    ["jelly-duo"]              = "fa@jellyduo",
+    ["jelly-fill"]             = "fa@jellyfill",
+    ["notdog"]                 = "fa@notdog",
+    ["notdog-duo"]             = "fa@notdogduo",
+    ["slab"]                   = "fa@slab",
+    ["slab-press"]             = "fa@slabpress",
+    ["thumbprint"]             = "fa@thumbprint",
+    ["utility"]                = "fa@utility",
+    ["utility-duo"]            = "fa@utilityduo",
+    ["utility-fill"]           = "fa@utilityfill",
+    ["whiteboard"]             = "fa@whiteboard",
+  }
+
+  function fa_emit(name, style)
+    local cp = fa_icons.codepoints[name]
+    if not cp then
+      tex.error("fiddlie-icons: unknown icon name '" .. name .. "'")
+      return
+    end
+    local csname
+    if fa_icons.brand_only[name] then
+      csname = "fa@brands"
+    else
+      csname = style_to_csname[style]
+      if not csname then
+        tex.error("fiddlie-icons: unknown style '" .. style .. "'")
+        return
+      end
+    end
+    tex.print('{\\csname ' .. csname .. '\\endcsname\\char"' .. cp:upper() .. ' }')
+  end
+\end{luacode*}
+
+% \faicon[style]{name}
+%   Inline icon at the surrounding font size. Default style: solid.
+%   Brand icons (e.g. github) auto-route to the Brands family regardless
+%   of style. See packages/fiddlie-icons.sty for the full style list.
+\NewDocumentCommand{\faicon}{O{solid} m}{%
+  \directlua{fa_emit("\luaescapestring{#2}", "\luaescapestring{#1}")}%
+}
+
+% \bigicon[style]{size}{name}
+%   Larger icon, intended as a lightweight replacement for an inline image
+%   in a document. Size is any TeX dimension (3cm, 72pt, 1in, ...).
+\NewDocumentCommand{\bigicon}{O{solid} m m}{%
+  {\fontsize{#2}{#2}\selectfont
+   \directlua{fa_emit("\luaescapestring{#3}", "\luaescapestring{#1}")}}%
+}
+
+\endinput

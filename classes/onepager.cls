@@ -41,6 +41,18 @@
 \newcommand{\yellowsection}[1]{\dotsection{brandyellow}{#1}}
 \newcommand{\bluesection}[1]{\dotsection{brandblue}{#1}}
 
+% \iconsection[colour]{icon}{Title}
+% Heading variant of \dotsection — a FontAwesome icon in place of the dot.
+% Colour is optional (defaults to current text colour); pass any xcolor
+% name including the brand palette. Icon is always solid; for other styles
+% build a custom heading with \faicon directly.
+\NewDocumentCommand{\iconsection}{o m m}{%
+  \par\addvspace{6pt}\noindent
+  \IfValueTF{#1}{\textcolor{#1}{\faicon{#2}}}{\faicon{#2}}%
+  \hspace{4pt}\textbf{#3}%
+  \par\nobreak\vspace{1pt}%
+}
+
 % \begin{twocol} ... \end{twocol} / \begin{threecol} ... \end{threecol}
 % Thin wrappers around multicols (loaded by fiddlie-common) that drop to
 % \small — the size most one-pagers want in their columned body.

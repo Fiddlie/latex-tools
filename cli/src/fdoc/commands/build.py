@@ -102,6 +102,11 @@ def build(docname: str, clean: bool, continuous: bool):
                     click.echo("No documents found in this repository.")
                 raise click.ClickException("Document not found.")
 
+    # Lazy-install FontAwesome fonts on first build of a machine. Silent
+    # when already installed; downloads + extracts (~62MB) otherwise.
+    from fdoc import fonts as fonts_lib
+    fonts_lib.ensure(on_progress=lambda m: click.echo(f"  {m}"))
+
     doc_path = doc["path"]
     tex_file = f"{doc['name']}.tex"
 

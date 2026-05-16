@@ -12,6 +12,7 @@ from fdoc.commands.name import name
 from fdoc.commands.rev import rev
 from fdoc.commands.push import push
 from fdoc.commands.completion import completion
+from fdoc.commands.fonts import fonts
 
 
 @click.group()
@@ -34,6 +35,7 @@ cli.add_command(name)
 cli.add_command(rev)
 cli.add_command(push)
 cli.add_command(completion)
+cli.add_command(fonts)
 
 
 if __name__ == "__main__":

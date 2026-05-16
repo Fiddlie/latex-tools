@@ -1,3 +1,7 @@
+# Locally-installed FontAwesome Pro kit (installed to TEXMFHOME by
+# `fdoc fonts install`; can also be staged here by hand for offline use).
+assets/fonts/
+
 # LaTeX build artifacts
 *.aux
 *.bbl
