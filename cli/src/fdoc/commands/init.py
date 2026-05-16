@@ -97,6 +97,12 @@ def init(folder_name: str, submodule_url: str, no_commit: bool):
             )
             click.echo("  Created initial commit")
 
+        # Ensure FontAwesome fonts are present — covers users who never
+        # run `fdoc build` locally (e.g. authoring with latexmk directly).
+        from fdoc import fonts as fonts_lib
+        click.echo("  Checking FontAwesome icon fonts...")
+        fonts_lib.ensure(on_progress=lambda m: click.echo(f"    {m}"))
+
         click.echo()
         click.secho(f"Successfully created '{folder_name}'!", fg="green", bold=True)
         click.echo()

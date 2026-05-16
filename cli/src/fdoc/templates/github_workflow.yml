@@ -141,9 +141,21 @@ jobs:
           mkdir -p ~/.fonts
           cd /tmp
           wget -q https://downloads.sourceforge.net/corefonts/arial32.exe
-          cabextract -q arial32.exe
+          cabextract -q arial32.exeC
           mv *.TTF ~/.fonts/ 2>/dev/null || mv *.ttf ~/.fonts/ 2>/dev/null || true
           fc-cache -f ~/.fonts
+
+      # Cache + install FontAwesome Pro icon fonts. Cache key includes a
+      # hash of fonts.py so a kit-version bump invalidates the cache; in
+      # steady state each run is an instant cache hit.
+      - name: Cache FontAwesome fonts
+        uses: actions/cache@v4
+        with:
+          path: ~/texmf/fonts/opentype/fiddlie
+          key: fa-kit-${{ hashFiles('latex-tools/cli/src/fdoc/fonts.py') }}
+
+      - name: Install FontAwesome fonts (no-op on cache hit)
+        run: fdoc fonts ensure
 
       - name: Configure latexmk
         run: |
