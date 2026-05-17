@@ -52,11 +52,22 @@ def resolve_document(repo_root: Path, docname: str) -> dict:
     return doc
 
 
+class _IndentedDumper(yaml.SafeDumper):
+    def increase_indent(self, flow=False, indentless=False):
+        return super().increase_indent(flow, False)
+
+
 def save_manifest(doc_path: Path, manifest: dict):
     """Write manifest data back to manifest.yaml."""
     manifest_file = doc_path / "manifest.yaml"
     with open(manifest_file, "w") as f:
-        yaml.dump(manifest, f, default_flow_style=False, sort_keys=False)
+        yaml.dump(
+            manifest,
+            f,
+            Dumper=_IndentedDumper,
+            default_flow_style=False,
+            sort_keys=False,
+        )
 
 
 def run_git(args: list[str], cwd: Path = None) -> subprocess.CompletedProcess:
