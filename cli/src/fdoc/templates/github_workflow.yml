@@ -141,7 +141,7 @@ jobs:
           mkdir -p ~/.fonts
           cd /tmp
           wget -q https://downloads.sourceforge.net/corefonts/arial32.exe
-          cabextract -q arial32.exeC
+          cabextract -q arial32.exe
           mv *.TTF ~/.fonts/ 2>/dev/null || mv *.ttf ~/.fonts/ 2>/dev/null || true
           fc-cache -f ~/.fonts
 
