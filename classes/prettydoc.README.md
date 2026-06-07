@@ -48,10 +48,11 @@ for a complete worked document.
 
 ## Features
 
-- A4 paper, 11pt **Montserrat** (Regular body, SemiBold display)
-- Full-bleed tricolour top bar (pink / yellow / blue) on the cover
-- 2cm margins; no running header, clean footer only
-- Footer: website (left), zero-padded `01 / 02` page indicator in brand blue (right)
+- A4 paper, 10pt **Montserrat** (Regular body, SemiBold display)
+- Full-bleed tricolour top bar (25% pink / 25% yellow / 50% blue) on the cover
+- Compact margins; logo and meta block sit close to the top edge; no running header
+- Footer: document reference / build ID (left), and a small bold `01 / 02`
+  page indicator squared into the bottom-right corner
 - Unnumbered, styled headings (`secnumdepth = 0`)
 - Brand colours from `fiddlie-common`: `brandpink`, `brandyellow`, `brandblue`
 
@@ -65,7 +66,9 @@ for a complete worked document.
 - `\doctype{}` — small label in the top-right meta block (e.g. "Brief")
 - `\revision{}` — revision string (e.g. A)
 - `\docyear{}` — year shown beside the revision
-- `\website{}` — meta/footer line (defaults to `fiddlie.com`)
+- `\website{}` — last line of the top-right meta block (defaults to `fiddlie.com`)
+- `\documentId{}` — document reference shown bottom-left in the footer
+  (falls back to the build ID, e.g. a LOCAL marker, when unset)
 - `\setlogo{filename}` — override the default logo (preamble)
 
 ### Structure & styling

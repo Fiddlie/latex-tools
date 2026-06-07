@@ -62,10 +62,11 @@
 % ---------------------------------------------------------------------------
 % Page geometry
 % ---------------------------------------------------------------------------
-% Generous margins; the running pages carry only a footer (no header), so
-% headheight is kept minimal. The tricolour bar bleeds to the paper edge and
-% sits above the top margin, so content clears it comfortably.
-\geometry{left=2cm, right=2cm, top=2.2cm, bottom=2cm, headheight=14pt}
+% Compact margins. The logo/meta masthead and the footer sit close to the
+% paper edges, so the running text has no header or footer reserved inside
+% the body — the footer is stamped in the margin (see below).
+\geometry{left=1.6cm, right=1.6cm, top=1.2cm, bottom=2.2cm,
+  headheight=0pt, headsep=0pt, footskip=0pt}
 
 % No section numbering — headings are styled, not enumerated.
 \setcounter{secnumdepth}{0}
@@ -121,39 +122,52 @@
     \put(0,0){%
       \begin{tikzpicture}
         \useasboundingbox (0,0) rectangle (\paperwidth,\paperheight);
-        \fill[brandpink]   (0,\pd@bary)             rectangle (0.36\paperwidth,\paperheight);
-        \fill[brandyellow] (0.36\paperwidth,\pd@bary) rectangle (0.56\paperwidth,\paperheight);
-        \fill[brandblue]   (0.56\paperwidth,\pd@bary) rectangle (\paperwidth,\paperheight);
+        \fill[brandpink]   (0,\pd@bary)              rectangle (0.25\paperwidth,\paperheight);
+        \fill[brandyellow] (0.25\paperwidth,\pd@bary) rectangle (0.50\paperwidth,\paperheight);
+        \fill[brandblue]   (0.50\paperwidth,\pd@bary) rectangle (\paperwidth,\paperheight);
       \end{tikzpicture}%
     }%
   }%
 }
 
 % ---------------------------------------------------------------------------
-% Footer / page styles
+% Footer — stamped into the page margin on every page
 % ---------------------------------------------------------------------------
-% Zero-padded "01 / 02" page indicator in dark ink, bottom-right; the
-% website sits quietly bottom-left. No running header on any page.
+% The footer is drawn as a foreground overlay rather than via fancyhdr so the
+% page indicator can sit square in the bottom-right corner: inset equally
+% from the right and bottom edges (= the side margin). The document
+% reference sits bottom-left on the same baseline. No running header.
+\pagestyle{empty}
+
+% Zero-padded "01 / 02" page indicator — small and bold.
 \newcommand{\pd@two}[1]{\ifnum#1<10 0\fi\number#1}
-\newcommand{\pd@pagenum}{%
-  {\color{pdink}\pd@two{\thepage}\,/\,\pd@two{\getpagerefnumber{LastPage}}}%
+\newcommand{\pd@pagenum}{\pd@two{\thepage}\,/\,\pd@two{\getpagerefnumber{LastPage}}}
+
+% Document reference: the document ID with revision, or the build ID (which
+% defaults to a LOCAL marker) when no document ID is set. Both \@documentId
+% and \@buildid come from fiddlie-common.
+\newcommand{\pd@docref}{%
+  \ifx\@documentId\@empty
+    \@buildid
+  \else
+    \@documentId\,\textperiodcentered\,Rev~\@revision
+  \fi
 }
-\fancypagestyle{pdpage}{%
-  \fancyhf{}%
-  \renewcommand{\headrulewidth}{0pt}%
-  \renewcommand{\footrulewidth}{0pt}%
-  \fancyfoot[L]{\footnotesize\color{pdfade}\pd@caps{\pd@website}}%
-  \fancyfoot[R]{\pd@pagenum}%
+
+% Corner inset for the footer; equal on both axes keeps the page number
+% square in the corner. Matched to the side margin.
+\newlength{\pd@footinset}\setlength{\pd@footinset}{1.6cm}
+\newcommand{\pd@footfont}{\scriptsize}
+\AddToShipoutPictureFG{%
+  % Bottom-right: page number, equally inset from the right and bottom edges.
+  \put(\LenToUnit{\dimexpr\paperwidth-\pd@footinset\relax},\LenToUnit{\pd@footinset}){%
+    \makebox(0,0)[rb]{\pd@footfont\bfseries\color{pdink}\pd@pagenum}%
+  }%
+  % Bottom-left: document reference / build ID, same small size.
+  \put(\LenToUnit{\pd@footinset},\LenToUnit{\pd@footinset}){%
+    \makebox(0,0)[lb]{\pd@footfont\color{pdfade}\pd@docref}%
+  }%
 }
-% First page uses the same furniture — the bar is added by \maketitle.
-\fancypagestyle{pdfirst}{%
-  \fancyhf{}%
-  \renewcommand{\headrulewidth}{0pt}%
-  \renewcommand{\footrulewidth}{0pt}%
-  \fancyfoot[L]{\footnotesize\color{pdfade}\pd@caps{\pd@website}}%
-  \fancyfoot[R]{\pd@pagenum}%
-}
-\pagestyle{pdpage}
 
 % ---------------------------------------------------------------------------
 % Eyebrow / kicker label — short blue rule + letterspaced uppercase blue text
@@ -194,8 +208,8 @@
 }
 \renewcommand{\maketitle}{%
   \pd@topbar
-  \thispagestyle{pdfirst}%
-  \vspace*{0.5cm}%
+  \thispagestyle{empty}%
+  \vspace*{0pt}%
   \noindent
   {\companylogo[height=1.05cm]}\hfill
   \begin{minipage}[b]{0.5\textwidth}\raggedleft\pd@metafont

@@ -14,6 +14,7 @@ styling looks after itself.}
 \revision{A}
 \docyear{2026}
 \website{fiddlie.com}
+\documentId{FD-DC-LTX-10001}  % shown in the footer; omit to fall back to the build ID
 \author{Fiddlie}
 \date{June 2026}
 
@@ -59,8 +60,8 @@ readable in source and consistent in print.
   \item \textbf{Inline emphasis} works exactly as usual
 \end{itemize}
 
-% --- A full display heading opens the next part (use \clearpage before it
-% if you'd rather start it on a fresh page) ---------------------------------
+% --- The next part opens on a fresh page with a full display heading -------
+\clearpage
 \eyebrow{Putting it to use}
 
 \section{Write \accentword[brandpink]{ordinary} LaTeX.}
@@ -84,9 +85,11 @@ that sit above a short run of bullets, like this one.
 
 \subsection{Footer and metadata}
 
-Every page carries a quiet website line and a zero-padded \accentword{01 / 02}
-page indicator. The cover's metadata block is driven by \verb|\doctype{}|,
-\verb|\revision{}|, \verb|\docyear{}| and \verb|\website{}|.
+Every page carries the document reference — \verb|\documentId{}| with the
+revision, or the build ID when it's unset — bottom-left, and a zero-padded
+\accentword{01 / 02} page indicator square in the bottom-right corner. The
+cover's metadata block is driven by \verb|\doctype{}|, \verb|\revision{}|,
+\verb|\docyear{}| and \verb|\website{}|.
 
 % --- A closing sign-off ----------------------------------------------------
 \closing{Swap in your own content and the document stays on-brand —
