@@ -14,7 +14,7 @@
 % Based on the article class; unknown options are passed straight through.
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 \ProcessOptions\relax
-\LoadClass[a4paper,11pt]{article}
+\LoadClass[a4paper,10pt]{article}
 
 % Shared Fiddlie styles: brand colours, logo, fancyhdr scaffolding,
 % FontAwesome icons, hyperref, etc.
@@ -82,7 +82,8 @@
 \newcommand{\pd@cardfont}{\fontsize{14}{18}\bfseries}
 \newcommand{\pd@closingfont}{\fontsize{13}{18}\bfseries}
 \newcommand{\pd@eyebrowfont}{\footnotesize\bfseries\color{brandblue}}
-\newcommand{\pd@metafont}{\footnotesize\bfseries\color{brandblue}}
+% Meta block: small, light (regular weight), neutral — not the brand blue.
+\newcommand{\pd@metafont}{\scriptsize\mdseries}
 
 % Letterspaced uppercase — the look of every label and kicker in the brand.
 \newcommand{\pd@caps}[1]{\textls[140]{\MakeUppercase{#1}}}
@@ -131,11 +132,11 @@
 % ---------------------------------------------------------------------------
 % Footer / page styles
 % ---------------------------------------------------------------------------
-% Zero-padded "01 / 02" page indicator in brand blue, bottom-right; the
+% Zero-padded "01 / 02" page indicator in dark ink, bottom-right; the
 % website sits quietly bottom-left. No running header on any page.
 \newcommand{\pd@two}[1]{\ifnum#1<10 0\fi\number#1}
 \newcommand{\pd@pagenum}{%
-  {\bfseries\color{brandblue}\pd@two{\thepage}\,/\,\pd@two{\getpagerefnumber{LastPage}}}%
+  {\color{pdink}\pd@two{\thepage}\,/\,\pd@two{\getpagerefnumber{LastPage}}}%
 }
 \fancypagestyle{pdpage}{%
   \fancyhf{}%
@@ -184,10 +185,12 @@
 % Logo (left) + meta block (right), then the eyebrow, the two-tone display
 % title, and an optional lead paragraph. Replaces fiddlie-common's full-page
 % title layout.
+% Doctype line in near-black, the revision and website lines in muted grey,
+% echoing the source artwork.
 \newcommand{\pd@metablock}{%
-  \ifx\pd@doctype\@empty\else\pd@caps{\pd@doctype}\\[2pt]\fi
-  \pd@caps{Document Rev \@revision\ifx\pd@year\@empty\else\ /\ \pd@year\fi}\\[2pt]
-  \pd@caps{\pd@website}%
+  \ifx\pd@doctype\@empty\else{\color{pdink}\pd@caps{\pd@doctype}}\\[2pt]\fi
+  {\color{pdfade}\pd@caps{Document Rev \@revision\ifx\pd@year\@empty\else\ /\ \pd@year\fi}}\\[2pt]
+  {\color{pdfade}\pd@caps{\pd@website}}%
 }
 \renewcommand{\maketitle}{%
   \pd@topbar
@@ -245,8 +248,9 @@
 % ---------------------------------------------------------------------------
 % Blue-dot bullet lists
 % ---------------------------------------------------------------------------
-\newcommand{\pd@bullet}{\textcolor{brandblue}{\raisebox{0.1ex}{\footnotesize\textbullet}}}
-\setlist[itemize]{label=\pd@bullet, leftmargin=1.5em,
+% A solid round blue dot, a touch larger than the text, vertically centred.
+\newcommand{\pd@bullet}{\tikz[baseline=-0.55ex]{\fill[brandblue] (0,0) circle (1.4pt);}}
+\setlist[itemize]{label=\pd@bullet, leftmargin=1.6em,
   itemsep=0.5ex, parsep=0pt, topsep=0.4ex}
 
 % ---------------------------------------------------------------------------
