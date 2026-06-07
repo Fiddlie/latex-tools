@@ -6,6 +6,9 @@ LaTeX document classes and packages for Fiddlie documentation.
 
 - **[datasheet](classes/datasheet.README.md)** - Professional product data sheets
 - **[requirements](classes/requirements.README.md)** - Structured requirements specification documents
+- **[policy](classes/policy.README.md)** - Internal policy documents
+- **[techreport](classes/techreport.README.md)** - Technical reports
+- **[prettydoc](classes/prettydoc.README.md)** - Branded, presentation-grade documents for public-facing briefs, guides and proposals
 
 ## Usage
 

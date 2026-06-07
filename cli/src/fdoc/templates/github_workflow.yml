@@ -92,6 +92,9 @@ jobs:
             fancyhdr
             lastpage
             titlesec
+            eso-pic
+            montserrat
+            refcount
             enumitem
             booktabs
             longtable
