@@ -12,11 +12,10 @@ styling looks after itself.}
 
 \doctype{Brief}
 \revision{A}
-\docyear{2026}
-\website{fiddlie.com}
 \documentId{FD-DC-LTX-10001}  % shown in the footer; omit to fall back to the build ID
 \author{Fiddlie}
-\date{June 2026}
+\date{June 2026}              % the meta-block year (2026) is pulled from this
+% \website{} defaults to fiddlie.com (last line of the top-right meta block)
 
 \begin{document}
 \maketitle
@@ -86,10 +85,11 @@ that sit above a short run of bullets, like this one.
 \subsection{Footer and metadata}
 
 Every page carries the document reference — \verb|\documentId{}| with the
-revision, or the build ID when it's unset — bottom-left, and a zero-padded
-\accentword{01 / 02} page indicator square in the bottom-right corner. The
-cover's metadata block is driven by \verb|\doctype{}|, \verb|\revision{}|,
-\verb|\docyear{}| and \verb|\website{}|.
+revision — bottom-left, with the build ID on a line beneath it (a LOCAL
+marker until a release build sets it). A small bold \accentword{01 / 02}
+page indicator sits squared into the bottom-right corner. The cover's meta
+block is driven by \verb|\doctype{}|, \verb|\revision{}| and \verb|\website{}|;
+the year is pulled from \verb|\date{}|.
 
 % --- A closing sign-off ----------------------------------------------------
 \closing{Swap in your own content and the document stays on-brand —

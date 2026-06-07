@@ -18,10 +18,11 @@ This is a **styling** class, not a content template — drop your own copy in.
 \kicker{A quick orientation}                 % eyebrow above the title
 \lead{A one-line intro shown under the title.}
 
-\doctype{Brief}        % top-right meta label
+\doctype{Brief}            % top-right meta label
 \revision{A}
-\docyear{2026}
-\website{fiddlie.com}  % defaults to fiddlie.com
+\documentId{FD-DC-LTX-10001}  % footer reference; year is pulled from \date{}
+\date{June 2026}
+% \website{} defaults to fiddlie.com
 
 \begin{document}
 \maketitle
@@ -64,12 +65,16 @@ for a complete worked document.
 - `\kicker{}` — eyebrow label shown above the cover title
 - `\lead{}` — intro paragraph shown under the cover title
 - `\doctype{}` — small label in the top-right meta block (e.g. "Brief")
-- `\revision{}` — revision string (e.g. A)
-- `\docyear{}` — year shown beside the revision
+- `\revision{}` — current revision string (e.g. A); shown in the meta block and footer
+- `\date{}` — document date; the meta-block year is pulled from it (e.g. "June 2026" → 2026)
 - `\website{}` — last line of the top-right meta block (defaults to `fiddlie.com`)
-- `\documentId{}` — document reference shown bottom-left in the footer
-  (falls back to the build ID, e.g. a LOCAL marker, when unset)
+- `\documentId{}` — document reference shown bottom-left in the footer, above the build ID
 - `\setlogo{filename}` — override the default logo (preamble)
+
+The build ID (from `fiddlie-common`, defaulting to a `LOCAL - NOT FOR RELEASE`
+marker) always appears as a small line beneath the document reference, so
+local builds are flagged. With a manifest, revision history lives in the
+manifest but is **not** rendered — only the current `revision.current` shows.
 
 ### Structure & styling
 

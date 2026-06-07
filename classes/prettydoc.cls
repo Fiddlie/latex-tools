@@ -90,24 +90,35 @@
 \newcommand{\pd@caps}[1]{\textls[140]{\MakeUppercase{#1}}}
 
 % ---------------------------------------------------------------------------
-% Document metadata fields (in addition to \title, \revision, \date etc.
-% provided by fiddlie-common)
+% Document metadata fields (in addition to \title, \revision, \date,
+% \documentId etc. provided by fiddlie-common)
 % ---------------------------------------------------------------------------
 % \doctype{...}  — the small label in the top-right meta block (e.g. "Brief")
-% \docyear{...}  — year shown beside the revision; defaults to empty
-% \website{...}  — final meta line / footer; defaults to fiddlie.com
+% \website{...}  — final line of the top-right meta block; defaults to fiddlie.com
 % \kicker{...}   — the eyebrow line shown above the title on the cover
 % \lead{...}     — the intro paragraph shown under the title on the cover
+% The meta-block year is not a field: it is pulled from \date (see below).
 \gdef\pd@doctype{}
 \newcommand{\doctype}[1]{\gdef\pd@doctype{#1}}
-\gdef\pd@year{}
-\newcommand{\docyear}[1]{\gdef\pd@year{#1}}
 \gdef\pd@website{fiddlie.com}
 \newcommand{\website}[1]{\gdef\pd@website{#1}}
 \gdef\pd@kicker{}
 \newcommand{\kicker}[1]{\gdef\pd@kicker{#1}}
 \gdef\pd@lead{}
 \newcommand{\lead}[1]{\gdef\pd@lead{#1}}
+
+% Pull a four-digit year out of \@date (e.g. "June 2026" -> "2026"); leaves
+% \pd@yearstr empty if the date carries no year. luacode is already loaded
+% (via fiddlie-icons), so \directlua is available.
+\gdef\pd@yearstr{}
+% (The year pattern uses [0-9] rather than %d: a literal % would start a TeX
+% comment inside the \directlua argument.)
+\newcommand{\pd@setyear}{%
+  \directlua{
+    local d = "\luaescapestring{\@date}"
+    token.set_macro("pd@yearstr", d:match("[0-9][0-9][0-9][0-9]") or "")
+  }%
+}
 
 % ---------------------------------------------------------------------------
 % Tricolour top bar (pink / yellow / blue), full-bleed on the first page
@@ -139,33 +150,37 @@
 % reference sits bottom-left on the same baseline. No running header.
 \pagestyle{empty}
 
-% Zero-padded "01 / 02" page indicator — small and bold.
+% Zero-padded "01 / 02" page indicator — small, bold, gently letterspaced.
 \newcommand{\pd@two}[1]{\ifnum#1<10 0\fi\number#1}
-\newcommand{\pd@pagenum}{\pd@two{\thepage}\,/\,\pd@two{\getpagerefnumber{LastPage}}}
+\newcommand{\pd@pagenum}{\textls[120]{\pd@two{\thepage}\,/\,\pd@two{\getpagerefnumber{LastPage}}}}
 
-% Document reference: the document ID with revision, or the build ID (which
-% defaults to a LOCAL marker) when no document ID is set. Both \@documentId
-% and \@buildid come from fiddlie-common.
-\newcommand{\pd@docref}{%
+% Bottom-left footer: the document reference (document ID with revision) on
+% top, and the build ID beneath it — the latter always shown so local builds
+% are flagged (it defaults to a LOCAL marker in fiddlie-common). With no
+% document ID, only the build ID line remains.
+\newcommand{\pd@footleft}{%
+  \pd@footfont\color{pdfade}%
   \ifx\@documentId\@empty
-    \@buildid
+    {\tiny\@buildid}%
   \else
-    \@documentId\,\textperiodcentered\,Rev~\@revision
+    \shortstack[l]{\@documentId\,\textperiodcentered\,Rev~\@revision\\[1pt]{\tiny\@buildid}}%
   \fi
 }
 
-% Corner inset for the footer; equal on both axes keeps the page number
-% square in the corner. Matched to the side margin.
-\newlength{\pd@footinset}\setlength{\pd@footinset}{1.6cm}
+% Footer insets. The page number is squared into the corner (equal inset
+% from the right and bottom edges); the bottom inset is a touch smaller than
+% the side inset so the whole footer sits a little closer to the page edge.
+\newlength{\pd@footside}\setlength{\pd@footside}{1.6cm}
+\newlength{\pd@footbottom}\setlength{\pd@footbottom}{1.45cm}
 \newcommand{\pd@footfont}{\scriptsize}
 \AddToShipoutPictureFG{%
-  % Bottom-right: page number, equally inset from the right and bottom edges.
-  \put(\LenToUnit{\dimexpr\paperwidth-\pd@footinset\relax},\LenToUnit{\pd@footinset}){%
+  % Bottom-right: page number.
+  \put(\LenToUnit{\dimexpr\paperwidth-\pd@footside\relax},\LenToUnit{\pd@footbottom}){%
     \makebox(0,0)[rb]{\pd@footfont\bfseries\color{pdink}\pd@pagenum}%
   }%
-  % Bottom-left: document reference / build ID, same small size.
-  \put(\LenToUnit{\pd@footinset},\LenToUnit{\pd@footinset}){%
-    \makebox(0,0)[lb]{\pd@footfont\color{pdfade}\pd@docref}%
+  % Bottom-left: document reference + build ID.
+  \put(\LenToUnit{\pd@footside},\LenToUnit{\pd@footbottom}){%
+    \makebox(0,0)[lb]{\pd@footleft}%
   }%
 }
 
@@ -202,8 +217,9 @@
 % Doctype line in near-black, the revision and website lines in muted grey,
 % echoing the source artwork.
 \newcommand{\pd@metablock}{%
+  \pd@setyear
   \ifx\pd@doctype\@empty\else{\color{pdink}\pd@caps{\pd@doctype}}\\[2pt]\fi
-  {\color{pdfade}\pd@caps{Document Rev \@revision\ifx\pd@year\@empty\else\ /\ \pd@year\fi}}\\[2pt]
+  {\color{pdfade}\pd@caps{Document Rev \@revision\ifx\pd@yearstr\@empty\else\ /\ \pd@yearstr\fi}}\\[2pt]
   {\color{pdfade}\pd@caps{\pd@website}}%
 }
 \renewcommand{\maketitle}{%
