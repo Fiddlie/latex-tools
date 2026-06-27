@@ -1,0 +1,66 @@
+\documentclass[]{onepager}
+
+% --- Document metadata -----------------------------------------------------
+% The masthead shows the title, revision, date and document ID. No manifest
+% here — see the datasheet-manifest example for the manifest-driven flow.
+\title{One-pager Class Showcase}
+\shorttitle{One-pager Showcase}
+\author{Fiddlie}
+\date{June 2026}
+\documentId{FD-DC-LTX-10020}
+\revision{A}
+\draft
+
+\begin{document}
+\maketitle
+
+% --- Optional preamble: a paragraph of context before the columned body ----
+\begin{small}
+The one-pager class keeps everything on a single A4 page: a compact masthead,
+tight vertical rhythm, and a columned body. Sections never force a page break,
+so the layout stays dense. Use coloured dot headings to echo the brand, and
+drop into two or three columns wherever the content suits it.
+\end{small}
+
+\vspace{4pt}
+
+% --- Two-column body with coloured dot-section headings ---------------------
+% \pinksection / \yellowsection / \bluesection cycle the brand palette;
+% \dotsection{colour}{Title} takes any xcolor name for full control.
+\begin{twocol}
+  \pinksection{Coloured dot headings}
+  Each heading is a filled circle in a brand colour followed by a bold title,
+  echoing the dots in the Fiddlie logo. Use \texttt{\textbackslash pinksection},
+  \texttt{\textbackslash yellowsection} and \texttt{\textbackslash bluesection}
+  for the standard palette.
+
+  \yellowsection{Icon headings}
+  \iconsection[brandblue]{lightbulb}{Swap the dot for an icon}
+  Use \texttt{\textbackslash iconsection[colour]\{icon\}\{Title\}} to put a
+  FontAwesome icon in place of the dot — handy when a glyph carries meaning.
+
+  \bluesection{Columns}
+  Wrap content in \texttt{twocol} or \texttt{threecol} to flow it into balanced
+  columns at a smaller size. Paragraphs avoid splitting awkwardly across the
+  column break.
+
+  \dotsection{brandpink}{Custom colours}
+  \texttt{\textbackslash dotsection} accepts any xcolor name, so headings are
+  not limited to the three brand colours.
+\end{twocol}
+
+\vspace{2pt}
+
+% --- A three-column strip works well for short, scannable items ------------
+\begin{threecol}
+  \iconsection[brandpink]{bolt}{Fast}
+  Single-page output builds quickly and reads at a glance.
+
+  \iconsection[brandyellow]{ruler-combined}{Tight}
+  Compact geometry and vertical rhythm fit more on the page.
+
+  \iconsection[brandblue]{palette}{On-brand}
+  Brand colours, logo and type are inherited from \texttt{fiddlie-common}.
+\end{threecol}
+
+\end{document}

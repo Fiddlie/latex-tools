@@ -12,13 +12,26 @@ from jinja2 import Template
 from fdoc.templates import get_template, list_templates
 
 # Available document types and their display names
-DOCUMENT_TYPES = ["datasheet", "requirements", "policy", "report", "onepager"]
+DOCUMENT_TYPES = ["datasheet", "requirements", "policy", "report", "onepager", "prettydoc"]
 DOCUMENT_TYPE_NAMES = {
     "datasheet": "Datasheet",
     "requirements": "Requirements",
     "policy": "Policy",
     "report": "Report",
     "onepager": "One-pager",
+    "prettydoc": "Pretty document",
+}
+
+# Maps each document type to the LaTeX class it uses. Most match their type
+# name; "report" uses "techreport" to avoid colliding with LaTeX's built-in
+# report class. Used to detect a document's type from its .tex source.
+DOCUMENT_TYPE_CLASSES = {
+    "datasheet": "datasheet",
+    "requirements": "requirements",
+    "policy": "policy",
+    "report": "techreport",
+    "onepager": "onepager",
+    "prettydoc": "prettydoc",
 }
 
 
@@ -152,7 +165,7 @@ def create(
     """Create a new document in the documentation repository.
 
     DOCTYPE is the type of document to create: datasheet, requirements,
-    policy, or report
+    policy, report, onepager, or prettydoc
 
     Examples:
 

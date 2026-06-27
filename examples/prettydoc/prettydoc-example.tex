@@ -1,0 +1,98 @@
+\documentclass{prettydoc}
+
+% --- Document metadata -----------------------------------------------------
+% \accentword{} inside the title colours a word (blue by default; pass a colour
+% for the optional argument, e.g. \accentword[brandpink]{...}).
+\title{Working \accentword{together}, simply.}
+\kicker{A quick orientation}
+\lead{A short, brand-styled template you can drop any public-facing content
+into — briefs, guides, proposals or client notes. Replace the copy; the
+styling looks after itself.}
+% Optional extra metadata — unused fields simply don't render.
+
+\doctype{Brief}
+\revision{A}
+\documentId{FD-DC-LTX-10001}  % shown in the footer; omit to fall back to the build ID
+\author{Fiddlie}
+\date{June 2026}              % the meta-block year (2026) is pulled from this
+% \website{} defaults to fiddlie.com (last line of the top-right meta block)
+
+\begin{document}
+\maketitle
+
+% --- An eyebrow label introduces a section, just like the cover -----------
+\eyebrow{What this template gives you}
+
+The building blocks below are the same ones used across Fiddlie's
+public-facing documents. Each is a single command, so a document stays
+readable in source and consistent in print.
+
+% --- Numbered cards: a pale-blue chip above a bold heading ----------------
+% \card auto-numbers (01, 02, ...). Pair each with whatever content you like.
+\card{A branded cover}
+
+\begin{itemize}
+  \item A full-bleed \textbf{tricolour bar} along the top edge
+  \item The \texttt{fiddlie.} wordmark with a right-aligned metadata block
+  \item A two-tone display title and an optional lead paragraph
+\end{itemize}
+
+\card{Eyebrow labels}
+
+\begin{itemize}
+  \item Use \verb|\eyebrow{...}| to introduce a section in letterspaced blue caps
+  \item The same treatment appears above the cover title via \verb|\kicker{}|
+\end{itemize}
+
+\card{Numbered cards}
+
+\begin{itemize}
+  \item \verb|\card{Heading}| draws the chip and heading you see here
+  \item Numbering is automatic; pass \verb|\card[A]{...}| to set a label, or
+        \verb|\card*{...}| to reuse the current number
+\end{itemize}
+
+\card{Blue-dot lists}
+
+\begin{itemize}
+  \item Ordinary \texttt{itemize} lists pick up the brand bullet automatically
+  \item \textbf{Inline emphasis} works exactly as usual
+\end{itemize}
+
+% --- The next part opens on a fresh page with a full display heading -------
+\clearpage
+\eyebrow{Putting it to use}
+
+\section{Write \accentword[brandpink]{ordinary} LaTeX.}
+
+There is no special body layout to learn. Headings, paragraphs and lists all
+inherit the brand styling, so you can focus on the content.
+
+\subsection{Section headings}
+
+Use \verb|\section{...}| for big display headings — they accept \verb|\accentword{}|
+for a two-tone effect. Use \verb|\subsection{...}| for the compact bold lead-ins
+that sit above a short run of bullets, like this one.
+
+\subsection{Two-tone accents}
+
+\begin{itemize}
+  \item \verb|\accentword{word}| colours a word in brand \accentword{blue}
+  \item \verb|\accentword[brandpink]{word}| uses \accentword[brandpink]{pink}
+  \item \verb|\accentword[brandyellow]{word}| uses \accentword[brandyellow]{yellow}
+\end{itemize}
+
+\subsection{Footer and metadata}
+
+Every page carries the document reference — \verb|\documentId{}| with the
+revision — bottom-left, with the build ID on a line beneath it (a LOCAL
+marker until a release build sets it). A small bold \accentword{01 / 02}
+page indicator sits squared into the bottom-right corner. The cover's meta
+block is driven by \verb|\doctype{}|, \verb|\revision{}| and \verb|\website{}|;
+the year is pulled from \verb|\date{}|.
+
+% --- A closing sign-off ----------------------------------------------------
+\closing{Swap in your own content and the document stays on-brand —
+predictable structure, so the writing has room to breathe.}
+
+\end{document}

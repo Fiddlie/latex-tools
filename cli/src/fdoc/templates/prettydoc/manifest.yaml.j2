@@ -1,0 +1,21 @@
+# Document manifest for {{ title }}
+# This file is loaded by fiddlie-manifest package
+
+document:
+  title: "{{ title }}"
+  shorttitle: "{{ shorttitle }}"
+  author: "{{ author }}"
+  date: "{{ date }}"
+  id: "{{ document_id }}"
+
+revision:
+  current: "{{ revision }}"
+  draft: true
+
+# Revision history lives here for the record. prettydoc does NOT render it —
+# only the current revision is shown on the cover and in the footer.
+history:
+  - revision: "{{ revision }}"
+    date: "{{ date }}"
+    author: "{{ author }}"
+    changes: "Initial revision"
