@@ -24,6 +24,9 @@ This repository supports the following document types:
 - **Report** - Engineering and research reports (`techreport` class)
   - 📖 See [latex-tools/docs/CLAUDE_REPORT.md](latex-tools/docs/CLAUDE_REPORT.md) for complete guidelines
 
+- **One-pager** - Single-page, brand-styled summaries and fact sheets
+  - 📖 See [latex-tools/docs/CLAUDE_ONEPAGER.md](latex-tools/docs/CLAUDE_ONEPAGER.md) for complete guidelines
+
 - **Pretty document** - Branded, public-facing briefs, guides and proposals
   - 📖 See [latex-tools/docs/CLAUDE_PRETTYDOC.md](latex-tools/docs/CLAUDE_PRETTYDOC.md) for complete guidelines
 
@@ -38,6 +41,7 @@ This repository supports the following document types:
 - Working on requirements? → Read [latex-tools/docs/CLAUDE_REQUIREMENTS.md](latex-tools/docs/CLAUDE_REQUIREMENTS.md)
 - Working on a policy? → Read [latex-tools/docs/CLAUDE_POLICY.md](latex-tools/docs/CLAUDE_POLICY.md)
 - Working on a report? → Read [latex-tools/docs/CLAUDE_REPORT.md](latex-tools/docs/CLAUDE_REPORT.md)
+- Working on a one-pager? → Read [latex-tools/docs/CLAUDE_ONEPAGER.md](latex-tools/docs/CLAUDE_ONEPAGER.md)
 - Working on a branded brief/guide? → Read [latex-tools/docs/CLAUDE_PRETTYDOC.md](latex-tools/docs/CLAUDE_PRETTYDOC.md)
 - Need manifest format? → Read [latex-tools/docs/CLAUDE_MANIFEST.md](latex-tools/docs/CLAUDE_MANIFEST.md)
 - General LaTeX help? → Continue reading below
