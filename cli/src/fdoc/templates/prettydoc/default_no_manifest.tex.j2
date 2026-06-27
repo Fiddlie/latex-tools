@@ -1,0 +1,44 @@
+\documentclass{prettydoc}
+
+% --- Document metadata ------------------------------------------------------
+% Tip: wrap a word of the title in \accentword{} for the two-tone effect, e.g.
+%   \title{Working \accentword{together}, simply.}
+\title{ {{- title -}} }
+\shorttitle{ {{- shorttitle -}} }
+\author{ {{- author -}} }
+\date{ {{- date -}} }
+\documentId{ {{- document_id -}} }
+\revision{ {{- revision -}} }
+\draft
+
+% --- prettydoc cover extras -------------------------------------------------
+\doctype{Brief}              % small label in the top-right meta block
+\kicker{A quick orientation} % eyebrow line shown above the title
+\lead{One or two sentences introducing the document and what the reader
+will get from it.}
+% \website{} defaults to fiddlie.com (last line of the top-right meta block)
+
+\begin{document}
+\maketitle
+
+\eyebrow{What this covers}
+
+% TODO: Replace with your content. Ordinary LaTeX works throughout — headings,
+% paragraphs and lists all inherit the brand styling.
+
+\card{First point}
+
+\begin{itemize}
+  \item A numbered card pairs a pale-blue chip with a bold heading
+  \item Use \verb|\accentword{word}| to colour a word in brand blue
+\end{itemize}
+
+\card{Second point}
+
+\begin{itemize}
+  \item Ordinary \texttt{itemize} lists pick up the brand bullet automatically
+\end{itemize}
+
+\closing{A short closing line that leaves the reader with the key takeaway.}
+
+\end{document}

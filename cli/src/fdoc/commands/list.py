@@ -5,7 +5,13 @@ from typing import Optional
 
 import click
 
-from fdoc.commands.create import DOCUMENT_TYPES, find_repo_root
+import re
+
+from fdoc.commands.create import (
+    DOCUMENT_TYPES,
+    DOCUMENT_TYPE_CLASSES,
+    find_repo_root,
+)
 
 
 def find_documents(repo_root: Path) -> list[dict]:
@@ -42,12 +48,19 @@ def find_documents(repo_root: Path) -> list[dict]:
 
 
 def _detect_document_type(tex_file: Path) -> Optional[str]:
-    """Detect the document type from the .tex file content."""
+    """Detect the document type from the .tex file content.
+
+    Matches the LaTeX class named in \\documentclass{...} against each known
+    document type's class (e.g. report -> techreport).
+    """
     try:
         content = tex_file.read_text()
+        match = re.search(r"\\documentclass\s*(?:\[[^\]]*\])?\s*\{([^}]+)\}", content)
+        if not match:
+            return None
+        cls = match.group(1).strip()
         for doctype in DOCUMENT_TYPES:
-            # Look for documentclass usage
-            if f"fiddlie-{doctype}" in content:
+            if DOCUMENT_TYPE_CLASSES.get(doctype, doctype) == cls:
                 return doctype
         return None
     except Exception:

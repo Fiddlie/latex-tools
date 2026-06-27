@@ -52,6 +52,10 @@ Document types:
 
 - `datasheet` - Product data sheets
 - `requirements` - Requirements specification documents
+- `policy` - Internal policy documents
+- `report` - Engineering/research reports (`techreport` class)
+- `onepager` - Single-page summaries
+- `prettydoc` - Branded, public-facing briefs, guides and proposals
 
 Options:
 
@@ -298,6 +302,14 @@ fdoc create requirements \
   --id "FD-DC-LTX-01234" \
   --no-manifest \
   --template empty
+```
+
+### Create a branded brief with prettydoc
+
+```bash
+fdoc create prettydoc \
+  --title "Working Together, Simply" \
+  --id "FD-DC-LTX-10001"
 ```
 
 ## Requirements
