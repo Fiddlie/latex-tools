@@ -322,8 +322,12 @@ def _create_appsheet_document(
                 with open(rc_path) as f:
                     existing_config = yaml.safe_load(f) or {}
             existing_config["project"] = project_name
+            # Enable sync by default when a project is saved, since saving a
+            # project implies the user wants this repo to track AppSheet.
+            if "sync" not in existing_config:
+                existing_config["sync"] = True
             save_fdocrc(repo_root, existing_config)
-            click.echo("  Saved project to .fdocrc")
+            click.echo("  Saved project to .fdocrc (sync enabled)")
 
     # Create document in AppSheet
     click.echo("  Creating document in AppSheet...")

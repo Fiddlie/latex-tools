@@ -264,7 +264,7 @@ fdoc create datasheet --title "My Widget" --sync
 fdoc rev lock my-widget --sync
 ```
 
-When creating a document with sync enabled, fdoc will prompt you to choose a project (if not set in `.fdocrc`) and offer to save it.
+When creating a document with sync enabled, fdoc will prompt you to choose a project (if not set in `.fdocrc`) and offer to save it. Saving the project also enables `sync: true` in `.fdocrc` by default, so future commands sync automatically.
 
 ## Examples
 
