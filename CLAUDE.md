@@ -80,6 +80,39 @@ onepager commits for a worked example):
 6. Listings in the top-level `README.md`, `cli/README.md`, and the generated
    `cli/src/fdoc/templates/claude_guide.md`
 
+## Distribution & versioning (consuming repos)
+
+Consuming repos do **not** vendor latex-tools as a git submodule. Instead they
+pin a version in `.fdocrc`:
+
+```yaml
+latex_tools_version: "2.1.0"
+```
+
+`fdoc` downloads that version's **runtime bundle** (just `classes/ packages/
+lua/ assets/`) once per machine into a versioned cache
+(`~/.cache/fdoc/latex-tools/<version>/`, override with `FDOC_LATEX_TOOLS_HOME`)
+and adds it to `TEXINPUTS` at build time. Multiple pinned versions coexist;
+each project selects its own — see `cli/src/fdoc/tools.py`.
+
+- `fdoc init` writes the pin and a `.latexmkrc` that calls `fdoc tools texinputs`.
+- `fdoc build` lazy-installs the pinned runtime (and fonts) then builds.
+- `fdoc update [--to X.Y.Z]` bumps the pin; if it finds a legacy `latex-tools/`
+  submodule it migrates the repo off it.
+- `fdoc tools {install,ensure,status,texinputs,bundle}` manage the runtime.
+
+Inside a latex-tools checkout (this repo) there is no pin — `fdoc build` and the
+examples build straight from the working tree (`is_dev_checkout`).
+
+### Versioning is driven by git tags
+
+`fdoc`'s version comes from git tags via `hatch-vcs` (tag `vX.Y.Z`). On a
+published release the `.github/workflows/release.yml` workflow builds
+`latex-tools-runtime-vX.Y.Z.zip` (via `fdoc tools bundle`) and attaches it to
+the release; that is the artifact `fdoc tools install` downloads. So: **cut a
+release by tagging `vX.Y.Z`** — the CLI version, the runtime bundle, and the
+pin all derive from that tag.
+
 ## CLI development
 
 ```bash

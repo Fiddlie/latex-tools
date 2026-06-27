@@ -18,7 +18,8 @@ pipx install git+ssh://git@github.com/Fiddlie/latex-tools.git
 
 ### `fdoc init`
 
-Initialize a new documentation repository with latex-tools as a submodule.
+Initialize a new documentation repository. latex-tools is pinned by version in
+`.fdocrc` and installed on demand — it is **not** vendored as a submodule.
 
 ```bash
 fdoc init my-project-docs
@@ -27,16 +28,19 @@ fdoc init my-project-docs
 This creates:
 
 - A new directory with git initialized
-- latex-tools as a git submodule
+- `.fdocrc` pinning the latex-tools version (`latex_tools_version`)
 - `.gitignore` for LaTeX artifacts
-- `.latexmkrc` configured for the submodule
+- `.latexmkrc` that resolves the pinned runtime via `fdoc tools texinputs`
 - `.vscode/settings.json` for LaTeX Workshop
 - `.github/workflows/build.yml` for CI builds
 - `README.md` with setup instructions
 
+It then installs the pinned runtime and the FontAwesome fonts so the first
+build works offline.
+
 Options:
 
-- `--submodule-url URL` - Custom git URL for latex-tools (default: git@github.com:fiddlie/latex-tools.git)
+- `--latex-tools-version VERSION` - Version to pin (default: this fdoc's version)
 - `--no-commit` - Don't create an initial commit
 
 ### `fdoc create`
@@ -103,19 +107,38 @@ The `DOCNAME` argument can be:
 
 ### `fdoc update`
 
-Update the latex-tools submodule to the latest version.
+Update the pinned latex-tools version in `.fdocrc`, install that runtime, and
+re-sync the generated files (`.latexmkrc`, `.github/workflows/build.yml`,
+`CLAUDE.md`).
 
 ```bash
-fdoc update
-fdoc update --ref v1.2.0  # Update to specific tag
-fdoc update --ref main    # Update to specific branch
+fdoc update              # pin this fdoc's version
+fdoc update --to 2.1.0   # pin a specific version
 ```
 
-This also syncs configuration files from latex-tools templates, including the GitHub Actions workflow (`.github/workflows/build.yml`).
+If the repo still has a legacy `latex-tools/` submodule, `fdoc update` migrates
+it: the submodule is removed and the version is recorded in `.fdocrc` instead.
+Commit the result.
 
 Options:
 
-- `--ref TEXT` - Specific git ref (branch, tag, or commit) to checkout
+- `--to VERSION` - Version to pin (default: this fdoc's version)
+
+### `fdoc tools`
+
+Manage the cached, versioned latex-tools runtimes (classes/packages/lua/assets).
+
+```bash
+fdoc tools install            # install the version pinned in .fdocrc
+fdoc tools install 2.1.0      # install a specific version
+fdoc tools status             # list installed versions and the pinned one
+fdoc tools texinputs          # print the TEXINPUTS prefix (used by .latexmkrc)
+fdoc tools bundle             # build a runtime zip from a latex-tools checkout
+```
+
+Runtimes are cached under `~/.cache/fdoc/latex-tools/<version>/` (override with
+`FDOC_LATEX_TOOLS_HOME`). `install`/`ensure` accept `--source` to install from a
+local zip or directory instead of downloading the release artifact.
 
 ### `fdoc name`
 

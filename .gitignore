@@ -55,3 +55,6 @@ env/
 .pytype/
 .coverage
 htmlcov/
+
+# hatch-vcs generated version file
+cli/src/fdoc/_version.py

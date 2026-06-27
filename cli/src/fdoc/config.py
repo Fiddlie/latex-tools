@@ -90,6 +90,28 @@ def get_appsheet_app_id(config: Optional[dict] = None) -> str:
     return config.get("appsheet_app_id", DEFAULT_APP_ID)
 
 
+LATEX_TOOLS_VERSION_KEY = "latex_tools_version"
+
+
+def get_latex_tools_version(config: Optional[dict] = None) -> Optional[str]:
+    """Return the pinned latex-tools version from config, if any."""
+    if config is None:
+        config = load_config()
+    value = config.get(LATEX_TOOLS_VERSION_KEY)
+    return str(value) if value else None
+
+
+def set_latex_tools_version(repo_root: Path, version: str) -> None:
+    """Write/replace the latex-tools version pin in the repo's .fdocrc.
+
+    Preserves any other keys already present in that file.
+    """
+    rc_path = repo_root / ".fdocrc"
+    existing = _load_yaml_file(rc_path) if rc_path.is_file() else {}
+    existing[LATEX_TOOLS_VERSION_KEY] = version
+    save_fdocrc(repo_root, existing)
+
+
 def is_sync_enabled(flag: Optional[bool], config: Optional[dict] = None) -> bool:
     """Check if sync is enabled.
 

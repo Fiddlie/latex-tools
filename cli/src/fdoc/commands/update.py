@@ -1,35 +1,40 @@
-"""fdoc update command - Update latex-tools in the repository."""
+"""fdoc update command - bump the pinned latex-tools version (and migrate)."""
 
+import shutil
 import subprocess
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 import click
 
-from fdoc.commands.create import find_repo_root
+from fdoc.commands.create import find_legacy_submodule, find_repo_root
 from fdoc.templates import get_template
 
 
 @click.command()
 @click.option(
-    "--ref",
+    "--to",
+    "to_version",
     default=None,
-    help="Specific git ref (branch, tag, or commit) to checkout",
+    help="latex-tools version to pin (default: this fdoc's version)",
 )
-def update(ref: str):
-    """Update the latex-tools submodule to the latest version.
+def update(to_version: Optional[str]):
+    """Update the pinned latex-tools version and sync generated files.
 
-    Pulls the latest changes from the latex-tools remote repository
-    and updates the submodule reference.
+    If the repo still has a legacy `latex-tools/` submodule, this migrates it
+    to the pinned-install model: the submodule is removed and the version is
+    recorded in .fdocrc instead.
 
     Examples:
 
-        fdoc update
-
-        fdoc update --ref v1.2.0
-
-        fdoc update --ref main
+        fdoc update                 # pin this fdoc's version
+        fdoc update --to 2.1.0      # pin a specific version
     """
+    from fdoc import __version__
+    from fdoc import tools as tools_lib
+    from fdoc.config import get_latex_tools_version, set_latex_tools_version
+
     repo_root = find_repo_root()
     if repo_root is None:
         raise click.ClickException(
@@ -37,94 +42,129 @@ def update(ref: str):
             "Run 'fdoc init' to create one."
         )
 
-    latex_tools_path = repo_root / "latex-tools"
-    if not latex_tools_path.is_dir():
-        raise click.ClickException(
-            "latex-tools submodule not found. "
-            "This repository may not be properly initialized."
+    legacy = find_legacy_submodule(repo_root)
+    migrated = False
+
+    if legacy is not None:
+        # Prefer the version the submodule was actually at (if tagged), else
+        # fall back to an explicit --to, else this fdoc's version.
+        target = to_version or _submodule_version(legacy) or __version__
+        click.echo("Migrating from the latex-tools submodule to a pinned install...")
+        _remove_submodule(repo_root, legacy)
+        click.echo("  Removed latex-tools submodule")
+        migrated = True
+    else:
+        target = to_version or __version__
+        current = get_latex_tools_version()
+        if current:
+            click.echo(f"Updating latex-tools pin: {current} -> {target}")
+        else:
+            click.echo(f"Pinning latex-tools {target}")
+
+    # Record the pin.
+    set_latex_tools_version(repo_root, target)
+    click.echo(f"  Pinned latex-tools {target} in .fdocrc")
+
+    # Sync generated files from templates.
+    click.echo("  Syncing configuration files...")
+    _sync_latexmkrc(repo_root)
+    _sync_github_workflow(repo_root)
+    _sync_claude_guide(repo_root, target)
+
+    # Install the pinned runtime + fonts so the next build is ready.
+    click.echo(f"  Installing latex-tools {target} runtime...")
+    try:
+        tools_lib.ensure(target, on_progress=lambda m: click.echo(f"    {m}"))
+    except Exception as e:  # noqa: BLE001 - install is best-effort here
+        click.secho(
+            f"    Could not install runtime now ({e}). "
+            "It will install on your next 'fdoc build'.",
+            fg="yellow",
         )
 
-    click.echo("Updating latex-tools...")
+    from fdoc import fonts as fonts_lib
+    click.echo("  Checking FontAwesome icon fonts...")
+    fonts_lib.ensure(on_progress=lambda m: click.echo(f"    {m}"))
 
-    try:
-        # Fetch latest from remote
-        click.echo("  Fetching from remote...")
-        _run_git(["fetch", "origin"], cwd=latex_tools_path)
-
-        if ref:
-            # Checkout specific ref
-            click.echo(f"  Checking out {ref}...")
-            _run_git(["checkout", ref], cwd=latex_tools_path)
-        else:
-            # Get the current branch or default to main
-            current_branch = _get_current_branch(latex_tools_path)
-            if current_branch:
-                click.echo(f"  Pulling latest {current_branch}...")
-                _run_git(["pull", "origin", current_branch], cwd=latex_tools_path)
-            else:
-                # Detached HEAD - checkout main and pull
-                click.echo("  Checking out main branch...")
-                _run_git(["checkout", "main"], cwd=latex_tools_path)
-                _run_git(["pull", "origin", "main"], cwd=latex_tools_path)
-
-        # Get the new commit info
-        commit_info = _get_commit_info(latex_tools_path)
-
-        # Sync configuration files from templates
-        click.echo("  Syncing configuration files...")
-        _sync_github_workflow(repo_root)
-        _sync_claude_guide(repo_root)
-
-        # Ensure FontAwesome icon fonts are installed so users get the full
-        # update (templates + fonts) in one command rather than seeing a
-        # surprise download on their next build.
-        from fdoc import fonts as fonts_lib
-        click.echo("  Checking FontAwesome icon fonts...")
-        fonts_lib.ensure(on_progress=lambda m: click.echo(f"    {m}"))
-
-        click.echo()
-        click.secho("Successfully updated latex-tools!", fg="green", bold=True)
-        if commit_info:
-            click.echo(f"  Now at: {commit_info}")
-        click.echo()
-        click.echo("Don't forget to commit the changes:")
-        click.echo("  git add latex-tools .github/workflows/build.yml CLAUDE.md")
-        click.echo('  git commit -m "Update latex-tools"')
-
-    except subprocess.CalledProcessError as e:
-        raise click.ClickException(f"Git command failed: {e.stderr or e}")
+    click.echo()
+    click.secho("Successfully updated latex-tools!", fg="green", bold=True)
+    click.echo()
+    click.echo("Don't forget to commit the changes:")
+    if migrated:
+        click.echo("  git add -A")
+        click.echo('  git commit -m "Migrate to pinned latex-tools install"')
+    else:
+        click.echo("  git add .fdocrc .latexmkrc .github/workflows/build.yml CLAUDE.md")
+        click.echo(f'  git commit -m "Update latex-tools to {target}"')
 
 
-def _run_git(args: list, cwd: Path) -> subprocess.CompletedProcess:
+def _run_git(args: list, cwd: Path, check: bool = True) -> subprocess.CompletedProcess:
     """Run a git command in the specified directory."""
     return subprocess.run(
         ["git"] + args,
         cwd=cwd,
-        check=True,
+        check=check,
         capture_output=True,
         text=True,
     )
 
 
-def _get_current_branch(repo_path: Path) -> str | None:
-    """Get the current branch name, or None if in detached HEAD state."""
-    try:
-        result = _run_git(["symbolic-ref", "--short", "HEAD"], cwd=repo_path)
-        return result.stdout.strip()
-    except subprocess.CalledProcessError:
-        return None
+def _submodule_version(submodule_path: Path) -> Optional[str]:
+    """Return the submodule's checked-out version from its git tag, if any.
 
-
-def _get_commit_info(repo_path: Path) -> str | None:
-    """Get a short description of the current commit."""
+    Looks for a tag like vX.Y.Z; returns the bare X.Y.Z. None if untagged.
+    """
     try:
         result = _run_git(
-            ["log", "-1", "--format=%h %s"],
-            cwd=repo_path,
+            ["describe", "--tags", "--exact-match"], cwd=submodule_path, check=False
         )
-        return result.stdout.strip()
-    except subprocess.CalledProcessError:
+        tag = result.stdout.strip()
+    except Exception:
         return None
+    if not tag:
+        return None
+    return tag[1:] if tag.startswith("v") else tag
+
+
+def _remove_submodule(repo_root: Path, submodule_path: Path) -> None:
+    """Remove a `latex-tools` submodule (or plain vendored dir) from the repo."""
+    rel = submodule_path.name  # "latex-tools"
+
+    # Best-effort submodule deinit; ignore failure (may be a plain directory).
+    _run_git(["submodule", "deinit", "-f", "--", rel], cwd=repo_root, check=False)
+
+    # Remove from the index + working tree. Fall back to cached-only + rmtree.
+    rm = _run_git(["rm", "-rf", rel], cwd=repo_root, check=False)
+    if rm.returncode != 0:
+        _run_git(["rm", "-r", "--cached", rel], cwd=repo_root, check=False)
+        if submodule_path.exists():
+            shutil.rmtree(submodule_path, ignore_errors=True)
+
+    # Drop the stored submodule git dir.
+    modules_dir = repo_root / ".git" / "modules" / rel
+    if modules_dir.exists():
+        shutil.rmtree(modules_dir, ignore_errors=True)
+
+    # Remove the .gitmodules entry; delete the file if it's now empty.
+    gitmodules = repo_root / ".gitmodules"
+    if gitmodules.is_file():
+        _run_git(
+            ["config", "-f", ".gitmodules", "--remove-section", f"submodule.{rel}"],
+            cwd=repo_root,
+            check=False,
+        )
+        remaining = gitmodules.read_text().strip()
+        if remaining:
+            _run_git(["add", ".gitmodules"], cwd=repo_root, check=False)
+        else:
+            _run_git(["rm", "-f", ".gitmodules"], cwd=repo_root, check=False)
+            if gitmodules.exists():
+                gitmodules.unlink()
+
+
+def _sync_latexmkrc(repo_root: Path):
+    """Rewrite .latexmkrc from the current template (pinned-runtime resolver)."""
+    (repo_root / ".latexmkrc").write_text(get_template("latexmkrc.txt"))
 
 
 def _sync_github_workflow(repo_root: Path):
@@ -135,15 +175,11 @@ def _sync_github_workflow(repo_root: Path):
     (workflows_dir / "build.yml").write_text(content)
 
 
-def _sync_claude_guide(repo_root: Path):
-    """Sync the CLAUDE.md file while preserving custom content.
-
-    Reference guides (CLAUDE_DATASHEET.md, CLAUDE_REQUIREMENTS.md, CLAUDE_MANIFEST.md)
-    live in latex-tools/docs/ and are updated when the submodule is updated.
-    """
+def _sync_claude_guide(repo_root: Path, version: str):
+    """Sync the CLAUDE.md file while preserving custom content."""
     from jinja2 import Template
+    from fdoc.tools import docs_base_url
 
-    # Sync main CLAUDE.md with custom content preservation
     claude_md_path = repo_root / "CLAUDE.md"
 
     # Extract custom section if file exists
@@ -151,21 +187,16 @@ def _sync_claude_guide(repo_root: Path):
     if claude_md_path.exists():
         existing_content = claude_md_path.read_text()
 
-        # Try to extract content between custom section markers
         custom_start = "<!-- CUSTOM SECTION START -->"
         custom_end = "<!-- CUSTOM SECTION END -->"
 
         if custom_start in existing_content and custom_end in existing_content:
-            # Extract custom section
             start_idx = existing_content.find(custom_start)
             end_idx = existing_content.find(custom_end) + len(custom_end)
             custom_content = existing_content[start_idx:end_idx]
         else:
-            # No markers found - preserve entire file as legacy custom content
             managed_end = "<!-- MANAGED SECTION END -->"
             if managed_end in existing_content:
-                # Has managed section marker but missing custom markers
-                # Extract everything after managed section
                 end_idx = existing_content.find(managed_end) + len(managed_end)
                 legacy_content = existing_content[end_idx:].strip()
                 if legacy_content:
@@ -180,24 +211,19 @@ def _sync_claude_guide(repo_root: Path):
 {custom_end}
 """
 
-    # Generate new managed section
     template_content = get_template("claude_guide.md")
     template = Template(template_content)
     update_date = datetime.now().strftime("%Y-%m-%d")
-    new_content = template.render(update_date=update_date)
+    new_content = template.render(
+        update_date=update_date, docs_base=docs_base_url(version)
+    )
 
-    # If we have custom content, replace the default custom section
     if custom_content:
-        # Remove the default custom section from the template
         custom_start = "<!-- CUSTOM SECTION START -->"
         custom_end = "<!-- CUSTOM SECTION END -->"
-
         start_idx = new_content.find(custom_start)
         end_idx = new_content.find(custom_end) + len(custom_end)
-
         if start_idx != -1 and end_idx != -1:
-            # Replace default custom section with preserved content
             new_content = new_content[:start_idx] + custom_content + new_content[end_idx:]
 
-    # Write the main CLAUDE.md file
     claude_md_path.write_text(new_content)
