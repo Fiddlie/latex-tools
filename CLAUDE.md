@@ -106,12 +106,19 @@ examples build straight from the working tree (`is_dev_checkout`).
 
 ### Versioning is driven by git tags
 
-`fdoc`'s version comes from git tags via `hatch-vcs` (tag `vX.Y.Z`). On a
-published release the `.github/workflows/release.yml` workflow builds
+`fdoc`'s version comes from git tags via `hatch-vcs` (tag `vX.Y.Z`). To cut a
+release:
+
+1. Tag the commit `vX.Y.Z` and push the tag.
+2. **Publish a GitHub Release** for that tag (e.g. `gh release create vX.Y.Z
+   --generate-notes`, or via the GitHub UI).
+
+Publishing the release fires `.github/workflows/release.yml`, which builds
 `latex-tools-runtime-vX.Y.Z.zip` (via `fdoc tools bundle`) and attaches it to
-the release; that is the artifact `fdoc tools install` downloads. So: **cut a
-release by tagging `vX.Y.Z`** — the CLI version, the runtime bundle, and the
-pin all derive from that tag.
+the release — that is the artifact `fdoc tools install` downloads. The CLI
+version, the runtime bundle, and the pin all derive from the tag. Note that a
+bare tag push alone does **not** trigger the workflow; the Release must be
+published.
 
 ## CLI development
 
