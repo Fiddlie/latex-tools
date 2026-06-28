@@ -58,3 +58,8 @@ htmlcov/
 
 # hatch-vcs generated version file
 cli/src/fdoc/_version.py
+
+# Installer build outputs
+dist-installer/
+installer/build/
+installer/*.spec

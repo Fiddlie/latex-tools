@@ -1,0 +1,31 @@
+# Fiddlie fdoc installer (Windows).
+# Self-contained: installs the fdoc binary and seeds the FontAwesome fonts and
+# the latex-tools runtime from the bundled payload. No Python, no git, no
+# network access required.
+$ErrorActionPreference = "Stop"
+
+$Here = Split-Path -Parent $MyInvocation.MyCommand.Path
+$Version = "@VERSION@"
+$BinDir = if ($env:FDOC_BIN_DIR) { $env:FDOC_BIN_DIR } else { "$env:LOCALAPPDATA\Programs\fdoc" }
+
+Write-Host "Installing fdoc @VERSION@..."
+New-Item -ItemType Directory -Force -Path $BinDir | Out-Null
+Copy-Item "$Here\bin\fdoc.exe" "$BinDir\fdoc.exe" -Force
+Write-Host "  fdoc -> $BinDir\fdoc.exe"
+
+# Seed fonts + runtime offline from the bundled payload.
+& "$BinDir\fdoc.exe" setup `
+  --version "$Version" `
+  --fonts-source "$Here\payload\fonts" `
+  --runtime-source "$Here\payload\latex-tools-runtime-v$Version.zip"
+
+# Add to the user PATH if missing.
+$userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+if ($userPath -notlike "*$BinDir*") {
+    [Environment]::SetEnvironmentVariable("Path", "$userPath;$BinDir", "User")
+    Write-Host ""
+    Write-Host "Added $BinDir to your PATH. Open a new terminal for it to take effect."
+}
+
+Write-Host ""
+Write-Host "Done. Open a new terminal and run 'fdoc --help' to get started."

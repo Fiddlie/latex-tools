@@ -140,6 +140,26 @@ Runtimes are cached under `~/.cache/fdoc/latex-tools/<version>/` (override with
 `FDOC_LATEX_TOOLS_HOME`). `install`/`ensure` accept `--source` to install from a
 local zip or directory instead of downloading the release artifact.
 
+### `fdoc setup`
+
+One-step setup for a machine: installs the FontAwesome fonts, the latex-tools
+runtime, and shell completion. Idempotent — safe to re-run.
+
+```bash
+fdoc setup                    # download + install everything
+fdoc setup --version 2.1.0    # set up a specific runtime version
+```
+
+The self-contained installer runs this with local sources so it works offline:
+
+```bash
+fdoc setup --fonts-source ./payload/fonts \
+           --runtime-source ./payload/latex-tools-runtime-v2.1.0.zip
+```
+
+Options: `--version`, `--fonts-source`, `--runtime-source`, `--no-completion`,
+`--force`, `-q/--quiet`.
+
 ### `fdoc name`
 
 Generate a pretty name for a document based on its manifest metadata.

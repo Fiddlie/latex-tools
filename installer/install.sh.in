@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Fiddlie fdoc installer (macOS / Linux).
+# Self-contained: installs the fdoc binary and seeds the FontAwesome fonts and
+# the latex-tools runtime from the payload shipped alongside this script.
+# No Python, no git, no network access required.
+set -euo pipefail
+
+HERE="$(cd "$(dirname "$0")" && pwd)"
+VERSION="@VERSION@"
+BIN_DIR="${FDOC_BIN_DIR:-$HOME/.local/bin}"
+
+echo "Installing fdoc @VERSION@..."
+mkdir -p "$BIN_DIR"
+cp "$HERE/bin/fdoc" "$BIN_DIR/fdoc"
+chmod +x "$BIN_DIR/fdoc"
+echo "  fdoc -> $BIN_DIR/fdoc"
+
+# Seed fonts + runtime offline from the bundled payload.
+"$BIN_DIR/fdoc" setup \
+  --version "$VERSION" \
+  --fonts-source "$HERE/payload/fonts" \
+  --runtime-source "$HERE/payload/latex-tools-runtime-v$VERSION.zip"
+
+# PATH hint if needed.
+case ":$PATH:" in
+  *":$BIN_DIR:"*) ;;
+  *)
+    echo
+    echo "NOTE: $BIN_DIR is not on your PATH. Add it with:"
+    echo "  echo 'export PATH=\"$BIN_DIR:\$PATH\"' >> ~/.profile && source ~/.profile"
+    ;;
+esac
+
+echo
+echo "Done. Open a new terminal and run 'fdoc --help' to get started."

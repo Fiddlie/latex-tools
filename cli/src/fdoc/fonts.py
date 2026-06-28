@@ -109,6 +109,7 @@ def install(
         for otf in otfs:
             shutil.copy2(otf, target / otf.name)
 
+    _add_spaceless_aliases(target)
     report("Refreshing luaotfload font database…")
     _refresh_font_cache()
     return target
@@ -137,6 +138,31 @@ def _extract_kit_zip(zip_path: Path, dest: Path) -> Path:
     if len(entries) == 1 and entries[0].is_dir():
         return entries[0]
     return dest
+
+
+def _add_spaceless_aliases(target: Path) -> None:
+    """Add spaceless-named aliases next to OTFs whose filenames contain spaces.
+
+    The FA Pro OTF filenames contain spaces (e.g. "Font Awesome 7 Pro-Solid-
+    900.otf"). On older TeX Live (~2023), fontspec strips the spaces before the
+    lookup and reports the font as not found. Providing a spaceless alias
+    ("FontAwesome7Pro-Solid-900.otf") makes the lookup resolve there. Harmless
+    on newer TeX Live, which resolves the spaced name directly.
+    """
+    for otf in list(target.glob("*.otf")):
+        if " " not in otf.name:
+            continue
+        alias = target / otf.name.replace(" ", "")
+        if alias.exists():
+            continue
+        try:
+            alias.symlink_to(otf.name)  # relative symlink within the dir
+        except (OSError, NotImplementedError):
+            # Windows without symlink privilege, or other FS limitation.
+            try:
+                shutil.copy2(otf, alias)
+            except OSError:
+                pass
 
 
 def _refresh_font_cache() -> None:

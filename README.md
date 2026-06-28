@@ -11,6 +11,24 @@ LaTeX document classes and packages for Fiddlie documentation.
 - **[onepager](classes/onepager.README.md)** - Single-page, brand-styled summaries and fact sheets
 - **[prettydoc](classes/prettydoc.README.md)** - Branded, presentation-grade documents for public-facing briefs, guides and proposals
 
+## Install (no technical setup)
+
+For non-developers, the easiest path is the **self-contained installer** — no
+Python, git, or command-line setup required:
+
+1. Download the installer for your OS from the latest
+   [Release](https://github.com/fiddlie/latex-tools/releases)
+   (`fdoc-installer-<os>-<arch>-vX.Y.Z.zip`).
+2. Unzip it and run the install script: `install.sh` (macOS/Linux — open a
+   terminal and run `bash install.sh`) or `install.ps1` (Windows — right-click →
+   *Run with PowerShell*).
+
+That's it. The installer places `fdoc` on your PATH and silently sets up the
+FontAwesome fonts and the latex-tools runtime from inside the bundle (offline).
+You still need a TeX distribution (TeX Live / MacTeX) and Arial installed.
+
+Developers can instead install the CLI directly — see below.
+
 ## Usage
 
 Consuming repositories use the [`fdoc` CLI](cli/README.md) and **pin a

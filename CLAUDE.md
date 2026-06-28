@@ -120,6 +120,16 @@ version, the runtime bundle, and the pin all derive from the tag. Note that a
 bare tag push alone does **not** trigger the workflow; the Release must be
 published.
 
+## Installers (non-technical setup)
+
+Non-developers install via a self-contained per-OS installer (no Python/git):
+the bundle ships the `fdoc` binary plus the FontAwesome OTFs and the pinned
+runtime, and its install script seeds them offline with `fdoc setup`. CI builds
+these on each release (`.github/workflows/installer.yml`); see `installer/` for
+the build script and details. `fdoc setup` is also the one-step setup for
+existing CLI installs (fonts + runtime + completion). The macOS/Windows binaries
+are not yet code-signed — see the `TODO(signing)` note in `installer/README.md`.
+
 ## CLI development
 
 ```bash
