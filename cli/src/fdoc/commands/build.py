@@ -1,14 +1,60 @@
 """fdoc build command - Build a specific document."""
 
+import os
 import subprocess
 from pathlib import Path
 from typing import Optional
 
 import click
 
-from fdoc.commands.create import find_repo_root
+from fdoc.commands.create import (
+    find_legacy_submodule,
+    find_repo_root,
+    is_dev_checkout,
+)
 from fdoc.commands.list import find_documents
 from fdoc.completion import complete_docname
+
+
+def _build_env(repo_root: Path) -> dict:
+    """Return an environment for latexmk with the latex-tools runtime on TEXINPUTS.
+
+    Resolution order:
+    - latex-tools source checkout -> build from the working tree;
+    - pinned version in .fdocrc   -> lazy-install and use that version;
+    - legacy `latex-tools/` submodule -> use it (back-compat, suggest migrating).
+    """
+    from fdoc import tools as tools_lib
+    from fdoc.config import get_latex_tools_version
+
+    env = os.environ.copy()
+    prefix: Optional[str] = None
+
+    if is_dev_checkout(repo_root):
+        prefix = tools_lib.texinputs_for_dir(repo_root)
+    else:
+        version = get_latex_tools_version()
+        legacy = find_legacy_submodule(repo_root)
+        if version:
+            tools_lib.ensure(version, on_progress=lambda m: click.echo(f"  {m}"))
+            prefix = tools_lib.texinputs(version)
+        elif legacy is not None:
+            click.secho(
+                "  Using legacy latex-tools submodule. Run 'fdoc update' to "
+                "migrate to a pinned install.",
+                fg="yellow",
+            )
+            prefix = tools_lib.texinputs_for_dir(legacy)
+        else:
+            raise click.ClickException(
+                "No latex-tools runtime found. This repo has no "
+                "'latex_tools_version' pin in .fdocrc and no latex-tools "
+                "submodule. Run 'fdoc update' to set up a pinned install."
+            )
+
+    if prefix:
+        env["TEXINPUTS"] = prefix + env.get("TEXINPUTS", "")
+    return env
 
 
 def find_current_document(repo_root: Path) -> Optional[dict]:
@@ -107,6 +153,10 @@ def build(docname: str, clean: bool, continuous: bool):
     from fdoc import fonts as fonts_lib
     fonts_lib.ensure(on_progress=lambda m: click.echo(f"  {m}"))
 
+    # Resolve the latex-tools runtime and make it available to latexmk via
+    # TEXINPUTS, so a build works regardless of what .latexmkrc does.
+    build_env = _build_env(repo_root)
+
     doc_path = doc["path"]
     tex_file = f"{doc['name']}.tex"
 
@@ -119,7 +169,7 @@ def build(docname: str, clean: bool, continuous: bool):
         # Run clean first
         clean_cmd = ["latexmk", "-C", tex_file]
         click.echo("  Cleaning build artifacts...")
-        subprocess.run(clean_cmd, cwd=doc_path, check=False)
+        subprocess.run(clean_cmd, cwd=doc_path, check=False, env=build_env)
 
     if continuous:
         cmd.append("-pvc")
@@ -132,6 +182,7 @@ def build(docname: str, clean: bool, continuous: bool):
             cmd,
             cwd=doc_path,
             check=False,
+            env=build_env,
         )
         if result.returncode == 0:
             pdf_file = doc_path / f"{doc['name']}.pdf"

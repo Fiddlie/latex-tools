@@ -13,37 +13,37 @@ This repository contains Fiddlie documentation written in LaTeX. When working wi
 This repository supports the following document types:
 
 - **Datasheet** - Product datasheets with specifications and technical details
-  - 📖 See [latex-tools/docs/CLAUDE_DATASHEET.md](latex-tools/docs/CLAUDE_DATASHEET.md) for complete guidelines
+  - 📖 See [CLAUDE_DATASHEET.md]({{ docs_base }}/CLAUDE_DATASHEET.md) for complete guidelines
 
 - **Requirements** - Requirements specifications with ID tracking and priority levels
-  - 📖 See [latex-tools/docs/CLAUDE_REQUIREMENTS.md](latex-tools/docs/CLAUDE_REQUIREMENTS.md) for complete guidelines
+  - 📖 See [CLAUDE_REQUIREMENTS.md]({{ docs_base }}/CLAUDE_REQUIREMENTS.md) for complete guidelines
 
 - **Policy** - Internal policy documents
-  - 📖 See [latex-tools/docs/CLAUDE_POLICY.md](latex-tools/docs/CLAUDE_POLICY.md) for complete guidelines
+  - 📖 See [CLAUDE_POLICY.md]({{ docs_base }}/CLAUDE_POLICY.md) for complete guidelines
 
 - **Report** - Engineering and research reports (`techreport` class)
-  - 📖 See [latex-tools/docs/CLAUDE_REPORT.md](latex-tools/docs/CLAUDE_REPORT.md) for complete guidelines
+  - 📖 See [CLAUDE_REPORT.md]({{ docs_base }}/CLAUDE_REPORT.md) for complete guidelines
 
 - **One-pager** - Single-page, brand-styled summaries and fact sheets
-  - 📖 See [latex-tools/docs/CLAUDE_ONEPAGER.md](latex-tools/docs/CLAUDE_ONEPAGER.md) for complete guidelines
+  - 📖 See [CLAUDE_ONEPAGER.md]({{ docs_base }}/CLAUDE_ONEPAGER.md) for complete guidelines
 
 - **Pretty document** - Branded, public-facing briefs, guides and proposals
-  - 📖 See [latex-tools/docs/CLAUDE_PRETTYDOC.md](latex-tools/docs/CLAUDE_PRETTYDOC.md) for complete guidelines
+  - 📖 See [CLAUDE_PRETTYDOC.md]({{ docs_base }}/CLAUDE_PRETTYDOC.md) for complete guidelines
 
 ### Common Resources
 
 - **Manifest Files** - Document metadata in YAML format
-  - 📖 See [latex-tools/docs/CLAUDE_MANIFEST.md](latex-tools/docs/CLAUDE_MANIFEST.md) for format specification
+  - 📖 See [CLAUDE_MANIFEST.md]({{ docs_base }}/CLAUDE_MANIFEST.md) for format specification
 
 ### When to Reference Which Guide
 
-- Working on a datasheet? → Read [latex-tools/docs/CLAUDE_DATASHEET.md](latex-tools/docs/CLAUDE_DATASHEET.md)
-- Working on requirements? → Read [latex-tools/docs/CLAUDE_REQUIREMENTS.md](latex-tools/docs/CLAUDE_REQUIREMENTS.md)
-- Working on a policy? → Read [latex-tools/docs/CLAUDE_POLICY.md](latex-tools/docs/CLAUDE_POLICY.md)
-- Working on a report? → Read [latex-tools/docs/CLAUDE_REPORT.md](latex-tools/docs/CLAUDE_REPORT.md)
-- Working on a one-pager? → Read [latex-tools/docs/CLAUDE_ONEPAGER.md](latex-tools/docs/CLAUDE_ONEPAGER.md)
-- Working on a branded brief/guide? → Read [latex-tools/docs/CLAUDE_PRETTYDOC.md](latex-tools/docs/CLAUDE_PRETTYDOC.md)
-- Need manifest format? → Read [latex-tools/docs/CLAUDE_MANIFEST.md](latex-tools/docs/CLAUDE_MANIFEST.md)
+- Working on a datasheet? → Read [CLAUDE_DATASHEET.md]({{ docs_base }}/CLAUDE_DATASHEET.md)
+- Working on requirements? → Read [CLAUDE_REQUIREMENTS.md]({{ docs_base }}/CLAUDE_REQUIREMENTS.md)
+- Working on a policy? → Read [CLAUDE_POLICY.md]({{ docs_base }}/CLAUDE_POLICY.md)
+- Working on a report? → Read [CLAUDE_REPORT.md]({{ docs_base }}/CLAUDE_REPORT.md)
+- Working on a one-pager? → Read [CLAUDE_ONEPAGER.md]({{ docs_base }}/CLAUDE_ONEPAGER.md)
+- Working on a branded brief/guide? → Read [CLAUDE_PRETTYDOC.md]({{ docs_base }}/CLAUDE_PRETTYDOC.md)
+- Need manifest format? → Read [CLAUDE_MANIFEST.md]({{ docs_base }}/CLAUDE_MANIFEST.md)
 - General LaTeX help? → Continue reading below
 
 ## Common Elements

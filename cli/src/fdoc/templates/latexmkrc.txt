@@ -1,9 +1,12 @@
-use File::Basename;
-use File::Spec;
-
-my $root_dir = dirname(File::Spec->rel2abs(__FILE__));
-my $latex_tools = "$root_dir/latex-tools";
-$ENV{'TEXINPUTS'} = "$latex_tools/classes//:$latex_tools/packages//:$latex_tools/lua//:" . ($ENV{'TEXINPUTS'} // '');
+# Resolve the pinned latex-tools runtime (see latex_tools_version in .fdocrc)
+# and put it on TEXINPUTS. This lets plain `latexmk` and the LaTeX Workshop
+# extension build without going through `fdoc build`, as long as `fdoc` is on
+# PATH. fdoc lazy-installs the pinned version on first use.
+my $fdoc_texinputs = `fdoc tools texinputs 2>/dev/null`;
+chomp $fdoc_texinputs;
+if ($fdoc_texinputs ne '') {
+    $ENV{'TEXINPUTS'} = $fdoc_texinputs . ($ENV{'TEXINPUTS'} // '');
+}
 
 $pdf_mode = 4;  # Use LuaLaTeX
 $lualatex = 'lualatex -interaction=nonstopmode -synctex=1 -shell-escape %O %S';

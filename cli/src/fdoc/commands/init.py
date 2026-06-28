@@ -9,8 +9,6 @@ import click
 
 from fdoc.templates import get_template
 
-LATEX_TOOLS_REPO = "git@github.com:fiddlie/latex-tools.git"
-
 
 def validate_folder_name(ctx, param, value):
     """Validate folder name doesn't contain problematic characters."""
@@ -24,31 +22,39 @@ def validate_folder_name(ctx, param, value):
 @click.command()
 @click.argument("folder_name", callback=validate_folder_name)
 @click.option(
-    "--submodule-url",
-    default=LATEX_TOOLS_REPO,
-    help="Git URL for the latex-tools submodule",
-    show_default=True,
+    "--latex-tools-version",
+    "latex_tools_version",
+    default=None,
+    help="latex-tools version to pin (default: this fdoc's version)",
 )
 @click.option(
     "--no-commit",
     is_flag=True,
     help="Don't create an initial commit",
 )
-def init(folder_name: str, submodule_url: str, no_commit: bool):
+def init(folder_name: str, latex_tools_version: str, no_commit: bool):
     """Initialize a new Fiddlie documentation repository.
 
-    Creates a new directory with git initialized, latex-tools as a submodule,
-    and all necessary configuration files for building LaTeX documents.
+    Creates a new directory with git initialized and all configuration needed
+    to build documents. latex-tools is no longer vendored as a submodule: the
+    repo pins a version in .fdocrc and `fdoc` installs that version's runtime
+    on demand.
 
     Example:
 
         fdoc init my-project-docs
     """
+    from fdoc import __version__
+    from fdoc import tools as tools_lib
+    from fdoc.config import set_latex_tools_version
+
     folder_path = Path.cwd() / folder_name
 
     # Check if folder already exists
     if folder_path.exists():
         raise click.ClickException(f"Directory '{folder_name}' already exists")
+
+    version = latex_tools_version or __version__
 
     click.echo(f"Creating documentation repository: {folder_name}")
 
@@ -61,13 +67,9 @@ def init(folder_name: str, submodule_url: str, no_commit: bool):
         _run_git(["init"], cwd=folder_path)
         click.echo("  Initialized git repository")
 
-        # Add latex-tools submodule
-        click.echo("  Adding latex-tools submodule...")
-        _run_git(
-            ["submodule", "add", submodule_url, "latex-tools"],
-            cwd=folder_path,
-        )
-        click.echo("  Added latex-tools submodule")
+        # Pin the latex-tools version (drives the on-demand runtime install).
+        set_latex_tools_version(folder_path, version)
+        click.echo(f"  Pinned latex-tools {version} in .fdocrc")
 
         # Write configuration files
         _write_gitignore(folder_path)
@@ -85,7 +87,7 @@ def init(folder_name: str, submodule_url: str, no_commit: bool):
         _write_readme(folder_path, folder_name)
         click.echo("  Created README.md")
 
-        _write_claude_guide(folder_path)
+        _write_claude_guide(folder_path, version)
         click.echo("  Created CLAUDE.md")
 
         # Create initial commit
@@ -97,8 +99,17 @@ def init(folder_name: str, submodule_url: str, no_commit: bool):
             )
             click.echo("  Created initial commit")
 
-        # Ensure FontAwesome fonts are present — covers users who never
-        # run `fdoc build` locally (e.g. authoring with latexmk directly).
+        # Install the pinned runtime and fonts so the first build works offline.
+        click.echo(f"  Installing latex-tools {version} runtime...")
+        try:
+            tools_lib.ensure(version, on_progress=lambda m: click.echo(f"    {m}"))
+        except Exception as e:  # noqa: BLE001 - install is best-effort at init
+            click.secho(
+                f"    Could not install runtime now ({e}). "
+                "It will install on your first 'fdoc build'.",
+                fg="yellow",
+            )
+
         from fdoc import fonts as fonts_lib
         click.echo("  Checking FontAwesome icon fonts...")
         fonts_lib.ensure(on_progress=lambda m: click.echo(f"    {m}"))
@@ -172,17 +183,19 @@ def _write_readme(folder_path: Path, project_name: str):
     (folder_path / "README.md").write_text(content)
 
 
-def _write_claude_guide(folder_path: Path):
+def _write_claude_guide(folder_path: Path, version: str):
     """Write the CLAUDE.md file with LaTeX formatting guidelines.
 
-    Reference guides (CLAUDE_DATASHEET.md, CLAUDE_REQUIREMENTS.md, CLAUDE_MANIFEST.md)
-    live in latex-tools/docs/ and are not copied to the repository.
+    Reference guides live in the latex-tools repo's docs/; the generated file
+    links to them on GitHub at the pinned version.
     """
     from jinja2 import Template
-    update_date = datetime.now().strftime("%Y-%m-%d")
+    from fdoc.tools import docs_base_url
 
-    # Main CLAUDE.md (reference guides live in latex-tools/docs/)
+    update_date = datetime.now().strftime("%Y-%m-%d")
     template_content = get_template("claude_guide.md")
     template = Template(template_content)
-    content = template.render(update_date=update_date)
+    content = template.render(
+        update_date=update_date, docs_base=docs_base_url(version)
+    )
     (folder_path / "CLAUDE.md").write_text(content)

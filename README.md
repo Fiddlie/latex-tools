@@ -11,79 +11,64 @@ LaTeX document classes and packages for Fiddlie documentation.
 - **[onepager](classes/onepager.README.md)** - Single-page, brand-styled summaries and fact sheets
 - **[prettydoc](classes/prettydoc.README.md)** - Branded, presentation-grade documents for public-facing briefs, guides and proposals
 
+## Install (no technical setup)
+
+For non-developers, the easiest path is the **self-contained installer** — no
+Python, git, or command-line setup required:
+
+1. Download the installer for your OS from the latest
+   [Release](https://github.com/fiddlie/latex-tools/releases)
+   (`fdoc-installer-<os>-<arch>-vX.Y.Z.zip`).
+2. Unzip it and run the install script: `install.sh` (macOS/Linux — open a
+   terminal and run `bash install.sh`) or `install.ps1` (Windows — right-click →
+   *Run with PowerShell*).
+
+That's it. The installer places `fdoc` on your PATH and silently sets up the
+FontAwesome fonts and the latex-tools runtime from inside the bundle (offline).
+You still need a TeX distribution (TeX Live / MacTeX) and Arial installed.
+
+Developers can instead install the CLI directly — see below.
+
 ## Usage
 
-This repository is designed to be used as a git submodule in documentation repositories.
+Consuming repositories use the [`fdoc` CLI](cli/README.md) and **pin a
+latex-tools version** in `.fdocrc` (`latex_tools_version`). `fdoc` installs that
+version's runtime (classes, packages, Lua modules and assets) on demand, cached
+per machine — no git submodule to vendor or keep in sync.
 
 ### Quick Start with fdoc CLI
 
-The easiest way to get started is with the [`fdoc` CLI tool](cli/README.md):
-
 ```bash
 # Install the CLI
-pip install "git+ssh://git@github.com/Fiddlie/latex-tools.git#subdirectory=cli"
+pip install "git+https://github.com/Fiddlie/latex-tools.git#subdirectory=cli"
 
-# Create a new documentation repository
+# Create a new documentation repository (pins a version, installs the runtime)
 fdoc init my-docs
 cd my-docs
 
-# Create a new document
+# Create and build a document
 fdoc create datasheet --title "My Product" --id "FD-DC-LTX-10001"
+fdoc build .
 ```
 
-### Manual Setup
+`fdoc build` lazy-installs the pinned runtime and the FontAwesome fonts on first
+use. Plain `latexmk` and LaTeX Workshop also work: the generated `.latexmkrc`
+asks `fdoc tools texinputs` for the pinned runtime's location.
 
-1. Add this repository as a submodule:
+### Migrating an existing submodule-based repo
 
-   ```bash
-   git submodule add git@github.com:fiddlie/latex-tools.git latex-tools
-   ```
+Older repos vendored latex-tools as a `latex-tools/` submodule. To move to the
+pinned model, run `fdoc update` in the repo — it removes the submodule, records
+the version in `.fdocrc`, and rewrites `.latexmkrc`. Commit the result.
 
-2. Create a `.latexmkrc` in your project root:
+### Pinning, updating and the runtime cache
 
-   ```perl
-   use File::Basename;
-   use File::Spec;
-
-   my $root_dir = dirname(File::Spec->rel2abs(__FILE__));
-   my $latex_tools = "$root_dir/latex-tools";
-   $ENV{'TEXINPUTS'} = "$latex_tools/classes//:$latex_tools/packages//:$latex_tools/lua//:" . ($ENV{'TEXINPUTS'} // '');
-
-   $pdf_mode = 4;  # Use LuaLaTeX
-   $lualatex = 'lualatex -interaction=nonstopmode -synctex=1 -shell-escape %O %S';
-   ```
-
-3. Create your document using the document class:
-   ```latex
-   \documentclass{datasheet}
-   % ... your content
-   ```
-
-### latexmk Parent Directory Support
-
-By default, `latexmk` only loads `.latexmkrc` files from the current directory or your home directory. Since documents live in subdirectories (e.g. `my-datasheet/`), you need to configure `latexmk` to search parent directories for the project-level `.latexmkrc`.
-
-Add the following to your `~/.latexmkrc`:
-
-```perl
-# Search parent directories for project-level .latexmkrc
-use File::Spec;
-use Cwd 'abs_path';
-
-my $dir = Cwd::cwd();
-my $home_rc = abs_path($ENV{HOME} . "/.latexmkrc");
-
-while ($dir ne '/') {
-    my $rc = "$dir/.latexmkrc";
-    if (-f $rc && abs_path($rc) ne $home_rc) {
-        do $rc;
-        last;
-    }
-    $dir = abs_path(File::Spec->catdir($dir, '..'));
-}
-```
-
-This walks up from the current directory until it finds a `.latexmkrc` (that isn't the home directory one) and loads it. This ensures that running `latexmk` from within a document subdirectory picks up the project root configuration.
+- The pin lives in `.fdocrc`: `latex_tools_version: "2.1.0"`.
+- Bump it with `fdoc update --to <version>` (a one-line, reviewable diff), then
+  commit — this keeps released documents reproducible.
+- Versions are cached under `~/.cache/fdoc/latex-tools/<version>/` (override with
+  `FDOC_LATEX_TOOLS_HOME`); many versions coexist.
+- Manage the cache directly with `fdoc tools {install,ensure,status}`.
 
 ## Requirements
 

@@ -1,0 +1,86 @@
+name: Build installers
+
+# On a published release (tag vX.Y.Z), build a self-contained fdoc installer
+# for each OS and attach it to the release. Each installer bundles the fdoc
+# binary, the FontAwesome Pro OTFs, and the pinned runtime, so end users run
+# one script — no Python, git, or network needed.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to build (without leading v)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  installer:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+          - os: macos-latest    # Apple Silicon (arm64)
+          - os: macos-13        # Intel (x86_64)
+          - os: windows-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # tags, for hatch-vcs
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install fdoc + PyInstaller
+        shell: bash
+        run: |
+          python -m pip install ./cli pyinstaller
+
+      - name: Resolve versions
+        id: ver
+        shell: bash
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          fi
+          echo "fakit=$(python -c 'from fdoc import fonts; print(fonts.FA_KIT_VERSION)')" >> "$GITHUB_OUTPUT"
+
+      - name: Download FontAwesome kit
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release download "fa-kit-v${{ steps.ver.outputs.fakit }}" \
+            --repo "${{ github.repository }}" \
+            --pattern '*.zip' --dir fa-kit
+
+      - name: Build installer
+        shell: bash
+        run: |
+          KIT=$(ls fa-kit/*.zip | head -1)
+          python installer/build.py --version "${{ steps.ver.outputs.version }}" --fonts-kit "$KIT"
+
+      # TODO(signing): notarize the macOS binary (Apple Developer ID) and
+      # code-sign the Windows .exe so users don't see Gatekeeper / SmartScreen
+      # warnings. Drop the signing steps in here once certs are available.
+
+      - name: Attach installer to release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist-installer/fdoc-installer-*.zip
+
+      - name: Upload as workflow artifact
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: fdoc-installer-${{ matrix.os }}
+          path: dist-installer/fdoc-installer-*.zip

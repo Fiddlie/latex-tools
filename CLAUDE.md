@@ -80,6 +80,56 @@ onepager commits for a worked example):
 6. Listings in the top-level `README.md`, `cli/README.md`, and the generated
    `cli/src/fdoc/templates/claude_guide.md`
 
+## Distribution & versioning (consuming repos)
+
+Consuming repos do **not** vendor latex-tools as a git submodule. Instead they
+pin a version in `.fdocrc`:
+
+```yaml
+latex_tools_version: "2.1.0"
+```
+
+`fdoc` downloads that version's **runtime bundle** (just `classes/ packages/
+lua/ assets/`) once per machine into a versioned cache
+(`~/.cache/fdoc/latex-tools/<version>/`, override with `FDOC_LATEX_TOOLS_HOME`)
+and adds it to `TEXINPUTS` at build time. Multiple pinned versions coexist;
+each project selects its own — see `cli/src/fdoc/tools.py`.
+
+- `fdoc init` writes the pin and a `.latexmkrc` that calls `fdoc tools texinputs`.
+- `fdoc build` lazy-installs the pinned runtime (and fonts) then builds.
+- `fdoc update [--to X.Y.Z]` bumps the pin; if it finds a legacy `latex-tools/`
+  submodule it migrates the repo off it.
+- `fdoc tools {install,ensure,status,texinputs,bundle}` manage the runtime.
+
+Inside a latex-tools checkout (this repo) there is no pin — `fdoc build` and the
+examples build straight from the working tree (`is_dev_checkout`).
+
+### Versioning is driven by git tags
+
+`fdoc`'s version comes from git tags via `hatch-vcs` (tag `vX.Y.Z`). To cut a
+release:
+
+1. Tag the commit `vX.Y.Z` and push the tag.
+2. **Publish a GitHub Release** for that tag (e.g. `gh release create vX.Y.Z
+   --generate-notes`, or via the GitHub UI).
+
+Publishing the release fires `.github/workflows/release.yml`, which builds
+`latex-tools-runtime-vX.Y.Z.zip` (via `fdoc tools bundle`) and attaches it to
+the release — that is the artifact `fdoc tools install` downloads. The CLI
+version, the runtime bundle, and the pin all derive from the tag. Note that a
+bare tag push alone does **not** trigger the workflow; the Release must be
+published.
+
+## Installers (non-technical setup)
+
+Non-developers install via a self-contained per-OS installer (no Python/git):
+the bundle ships the `fdoc` binary plus the FontAwesome OTFs and the pinned
+runtime, and its install script seeds them offline with `fdoc setup`. CI builds
+these on each release (`.github/workflows/installer.yml`); see `installer/` for
+the build script and details. `fdoc setup` is also the one-step setup for
+existing CLI installs (fonts + runtime + completion). The macOS/Windows binaries
+are not yet code-signed — see the `TODO(signing)` note in `installer/README.md`.
+
 ## CLI development
 
 ```bash

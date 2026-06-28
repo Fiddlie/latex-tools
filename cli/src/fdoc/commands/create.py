@@ -77,22 +77,40 @@ def get_next_document_number(output_dir: Path, doctype: str) -> int:
     return max_num + 1
 
 
+def is_dev_checkout(path: Path) -> bool:
+    """True if `path` is a latex-tools source checkout (build from working tree)."""
+    return (
+        (path / "classes").is_dir()
+        and (path / "packages").is_dir()
+        and (path / "lua").is_dir()
+    )
+
+
+def find_legacy_submodule(repo_root: Path) -> Optional[Path]:
+    """Return the legacy `latex-tools/` submodule path if present, else None."""
+    sub = repo_root / "latex-tools"
+    return sub if (sub / "classes").is_dir() else None
+
+
 def find_repo_root() -> Optional[Path]:
     """Find the root of the documentation repository.
 
-    Looks for a directory containing either:
-    - A 'latex-tools' subdirectory (submodule)
-    - A 'classes' subdirectory (we're inside latex-tools itself)
+    Looks for a directory that is, in priority order:
+    - a latex-tools source checkout (developing latex-tools itself), or
+    - a consuming repo that pins the version in .fdocrc (new model), or
+    - a consuming repo with a legacy `latex-tools/` submodule.
     """
     current = Path.cwd()
 
-    # Walk up the directory tree
     for parent in [current] + list(current.parents):
-        # Check for latex-tools submodule
-        if (parent / "latex-tools" / "classes").is_dir():
+        # Developing latex-tools itself (build from the working tree).
+        if is_dev_checkout(parent):
             return parent
-        # Check if we're inside latex-tools itself (for development)
-        if (parent / "classes").is_dir() and (parent / "packages").is_dir():
+        # Consuming repo, new model: a committed .fdocrc in a git repo.
+        if (parent / ".fdocrc").is_file() and (parent / ".git").exists():
+            return parent
+        # Consuming repo, legacy submodule.
+        if (parent / "latex-tools" / "classes").is_dir():
             return parent
 
     return None
